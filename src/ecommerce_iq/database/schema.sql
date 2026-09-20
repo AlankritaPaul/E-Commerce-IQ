@@ -254,8 +254,32 @@ CREATE INDEX IF NOT EXISTS idx_sales_date_revenue ON sales(sale_date, net_revenu
 -- ANALYTICAL VIEWS FOR HIGH-PERFORMANCE BI
 -- -----------------------------------------------------------------------------
 
--- View 1: Product Performance & Return Rate Aggregation
+-- View 1: Product Performance & Return Rate Aggregation (CTE to prevent join fan-out)
 CREATE VIEW IF NOT EXISTS v_product_performance_summary AS
+WITH sales_agg AS (
+    SELECT 
+        oi.product_id,
+        COALESCE(SUM(oi.quantity), 0) AS total_units_sold,
+        COALESCE(SUM(oi.item_total), 0.00) AS total_gross_revenue
+    FROM order_items oi
+    JOIN orders o ON oi.order_id = o.order_id AND o.status = 'completed'
+    GROUP BY oi.product_id
+),
+returns_agg AS (
+    SELECT 
+        product_id,
+        COALESCE(SUM(quantity_returned), 0) AS total_units_returned
+    FROM returns
+    GROUP BY product_id
+),
+reviews_agg AS (
+    SELECT 
+        product_id,
+        ROUND(AVG(rating), 2) AS average_rating,
+        COUNT(review_id) AS total_reviews
+    FROM reviews
+    GROUP BY product_id
+)
 SELECT 
     p.product_id,
     p.sku,
@@ -264,38 +288,54 @@ SELECT
     p.cost_price,
     p.retail_price,
     p.stock_quantity,
-    COALESCE(SUM(oi.quantity), 0) AS total_units_sold,
-    COALESCE(SUM(oi.item_total), 0.00) AS total_gross_revenue,
-    COALESCE(SUM(r.quantity_returned), 0) AS total_units_returned,
+    COALESCE(s.total_units_sold, 0) AS total_units_sold,
+    COALESCE(s.total_gross_revenue, 0.00) AS total_gross_revenue,
+    COALESCE(r.total_units_returned, 0) AS total_units_returned,
     ROUND(
         CASE 
-            WHEN SUM(oi.quantity) > 0 
-            THEN (COALESCE(SUM(r.quantity_returned), 0) * 100.0) / SUM(oi.quantity)
+            WHEN COALESCE(s.total_units_sold, 0) > 0 
+            THEN (COALESCE(r.total_units_returned, 0) * 100.0) / s.total_units_sold
             ELSE 0.0 
         END, 2
     ) AS return_rate_percentage,
-    ROUND(AVG(rev.rating), 2) AS average_rating,
-    COUNT(DISTINCT rev.review_id) AS total_reviews
+    COALESCE(rev.average_rating, 0.0) AS average_rating,
+    COALESCE(rev.total_reviews, 0) AS total_reviews
 FROM products p
 JOIN categories c ON p.category_id = c.category_id
-LEFT JOIN order_items oi ON p.product_id = oi.product_id
-LEFT JOIN orders o ON oi.order_id = o.order_id AND o.status = 'completed'
-LEFT JOIN returns r ON oi.order_item_id = r.order_item_id
-LEFT JOIN reviews rev ON p.product_id = rev.product_id
-GROUP BY p.product_id;
+LEFT JOIN sales_agg s ON p.product_id = s.product_id
+LEFT JOIN returns_agg r ON p.product_id = r.product_id
+LEFT JOIN reviews_agg rev ON p.product_id = rev.product_id;
 
--- View 2: Daily Business Scorecard Rollup
+-- View 2: Daily Business Scorecard Rollup (CTE to prevent join fan-out)
 CREATE VIEW IF NOT EXISTS v_daily_business_summary AS
+WITH daily_orders AS (
+    SELECT 
+        DATE(order_date) AS summary_date,
+        COUNT(DISTINCT order_id) AS total_orders,
+        COUNT(DISTINCT customer_id) AS active_purchasers,
+        SUM(subtotal) AS gross_sales,
+        SUM(discount_amount) AS total_discounts,
+        SUM(total_amount) AS net_revenue,
+        ROUND(AVG(total_amount), 2) AS average_order_value
+    FROM orders
+    WHERE status = 'completed'
+    GROUP BY DATE(order_date)
+),
+daily_returns AS (
+    SELECT 
+        DATE(return_date) AS summary_date,
+        COALESCE(SUM(refund_amount), 0.00) AS total_refunds_issued
+    FROM returns
+    GROUP BY DATE(return_date)
+)
 SELECT 
-    DATE(o.order_date) AS summary_date,
-    COUNT(DISTINCT o.order_id) AS total_orders,
-    COUNT(DISTINCT o.customer_id) AS active_purchasers,
-    SUM(o.subtotal) AS gross_sales,
-    SUM(o.discount_amount) AS total_discounts,
-    SUM(o.total_amount) AS net_revenue,
-    ROUND(AVG(o.total_amount), 2) AS average_order_value,
-    COALESCE(SUM(ret.refund_amount), 0.00) AS total_refunds_issued
-FROM orders o
-LEFT JOIN returns ret ON DATE(o.order_date) = DATE(ret.return_date)
-WHERE o.status = 'completed'
-GROUP BY DATE(o.order_date);
+    d.summary_date,
+    d.total_orders,
+    d.active_purchasers,
+    d.gross_sales,
+    d.total_discounts,
+    d.net_revenue,
+    d.average_order_value,
+    COALESCE(r.total_refunds_issued, 0.00) AS total_refunds_issued
+FROM daily_orders d
+LEFT JOIN daily_returns r ON d.summary_date = r.summary_date;
