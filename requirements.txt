@@ -1,0 +1,36 @@
+# ==============================================================================
+# E-Commerce IQ - Python Dependencies
+# ==============================================================================
+
+# Core Data Analysis & Manipulation
+pandas>=2.2.0
+numpy>=1.26.0
+
+# Database & SQL Execution
+SQLAlchemy>=2.0.30
+sqlglot>=23.0.0
+
+# Settings, Schema Validation & Environment
+pydantic>=2.7.0
+pydantic-settings>=2.2.0
+python-dotenv>=1.0.1
+
+# AI & LLM Services
+google-genai>=1.0.0
+openai>=1.30.0
+
+# Sentiment Analysis & Text Processing
+vaderSentiment>=3.3.2
+textblob>=0.18.0
+
+# Interactive BI Dashboard & Visualizations
+streamlit>=1.35.0
+plotly>=5.22.0
+
+# Synthetic Data Generation & Development Tools
+faker>=25.2.0
+rich>=13.7.0
+
+# Testing & Quality Assurance
+pytest>=8.2.0
+pytest-cov>=5.0.0
