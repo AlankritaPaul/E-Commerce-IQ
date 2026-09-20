@@ -78,6 +78,76 @@ class ReviewSentimentSummary:
     top_praises: List[str] = field(default_factory=list)
 
 
+@dataclass
+class CustomerAggregateSummary:
+    """High-level customer behavioral intelligence scorecard."""
+    total_registered_customers: int
+    active_purchasers: int
+    repeat_customers: int
+    one_time_buyers: int
+    repeat_purchase_rate_pct: float
+    average_customer_ltv: float
+    average_order_frequency: float
+    customer_return_rate_pct: float
+    review_participation_rate_pct: float
+    segment_breakdown: Dict[str, int] = field(default_factory=dict)
+
+
+@dataclass
+class CustomerProfile:
+    """Customer profile record with PII-protected display formatting."""
+    customer_id: int
+    display_name: str  # e.g. "Emma S." (PII protected)
+    city: str
+    country: str
+    segment: str
+    order_count: int
+    total_spend: float  # Lifetime spend
+    average_order_value: float
+    first_order_date: str
+    last_order_date: str
+    days_since_last_order: int
+    returns_count: int
+    total_refunds: float
+    return_rate_pct: float
+    reviews_count: int
+    average_rating_given: float
+    is_repeat_buyer: bool
+
+
+@dataclass
+class RFMCustomerScore:
+    """Individual customer Recency, Frequency, and Monetary (RFM) quintile evaluation."""
+    customer_id: int
+    display_name: str  # Masked PII: "First L."
+    city: str
+    country: str
+    recency_days: int
+    frequency_orders: int
+    monetary_spend: float
+    r_score: int  # 1 (least recent) to 5 (most recent)
+    f_score: int  # 1 (lowest frequency) to 5 (highest frequency)
+    m_score: int  # 1 (lowest spend) to 5 (highest spend)
+    rfm_score_str: str  # e.g. "555"
+    rfm_segment: str   # e.g. "Champions", "Loyal Customers", "At Risk"
+
+
+@dataclass
+class ChurnRiskCustomer:
+    """Customer flagged for potential churn based on recency and past spending."""
+    customer_id: int
+    display_name: str  # Masked PII: "First L."
+    city: str
+    country: str
+    segment: str
+    orders_placed: int
+    total_spend: float
+    average_order_value: float
+    days_since_last_order: int
+    risk_level: str  # 'Critical', 'High', 'Moderate'
+    estimated_revenue_at_risk: float
+
+
 # ==============================================================================
 # AI & Copilot Schemas
 # ==============================================================================
