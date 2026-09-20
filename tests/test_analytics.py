@@ -137,17 +137,51 @@ class TestAnalyticsEngine(unittest.TestCase):
         self.assertGreater(len(daily), 5)
 
     def test_revenue_by_product(self):
-        """Verify product revenue metrics and sorting."""
+        """Verify product revenue metrics, order frequency, refund amount, and sorting."""
         products = self.product_engine.get_revenue_by_product(limit=10)
         self.assertGreater(len(products), 0)
 
         first_prod = products[0]
         self.assertIn("sku", first_prod)
         self.assertIn("net_revenue", first_prod)
+        self.assertIn("order_frequency", first_prod)
+        self.assertIn("refund_amount", first_prod)
         self.assertIn("gross_profit", first_prod)
         self.assertIn("profit_margin_pct", first_prod)
         self.assertIn("return_rate_pct", first_prod)
         self.assertGreater(first_prod["net_revenue"], 0.0)
+        self.assertGreater(first_prod["order_frequency"], 0)
+
+    def test_product_feedback_details(self):
+        """Verify product feedback extraction returns reviews and complaints."""
+        # Check product 1 (PROD-ELEC-001 with battery defect)
+        feedback = self.product_engine.get_product_feedback_details(product_id=1)
+        self.assertIn("average_rating", feedback)
+        self.assertIn("top_complaints", feedback)
+        self.assertIn("top_praises", feedback)
+        self.assertGreater(feedback["total_reviews"], 0)
+
+    def test_product_performance_classification(self):
+        """Verify transparent data-driven classification of products."""
+        classified = self.product_engine.classify_products()
+
+        self.assertIn("high_performing", classified)
+        self.assertIn("quality_risk", classified)
+        self.assertIn("low_velocity", classified)
+        self.assertIn("steady_performers", classified)
+
+        self.assertGreater(len(classified["high_performing"]), 0)
+        self.assertGreater(len(classified["quality_risk"]), 0)
+
+        # Verify PROD-ELEC-001 is recognized as a Quality Risk due to return rate
+        quality_skus = [p["sku"] for p in classified["quality_risk"]]
+        self.assertIn("PROD-ELEC-001", quality_skus)
+
+        # Verify each item has a transparent classification reason and 0-100 health score
+        sample = classified["high_performing"][0]
+        self.assertIn("classification_reason", sample)
+        self.assertGreaterEqual(sample["health_score"], 0.0)
+        self.assertLessEqual(sample["health_score"], 100.0)
 
     def test_top_and_underperforming_products(self):
         """Verify top performers have higher revenue than underperforming products."""
