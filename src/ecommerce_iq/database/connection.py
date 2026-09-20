@@ -8,7 +8,7 @@ Provides unified database lifecycle management:
 """
 
 from contextlib import contextmanager
-from typing import Any, Generator, Optional
+from typing import Any, Dict, Generator, List, Optional
 from config.settings import get_settings
 
 
@@ -77,13 +77,49 @@ class DatabaseManager:
         finally:
             session.close()
 
+    @property
+    def sqlite_path(self) -> str:
+        """Resolve the SQLite database file path from settings."""
+        if self.database_url.startswith("sqlite:///"):
+            clean = self.database_url.replace("sqlite:///", "")
+            return str(self.settings.project_root / clean)
+        return self.database_url
+
+    def get_raw_connection(self) -> Any:
+        """
+        Return an active native SQLite connection with Row factory enabled.
+        Enables lightning-fast queries without ORM overhead.
+        """
+        import sqlite3
+        conn = sqlite3.connect(self.sqlite_path)
+        conn.row_factory = sqlite3.Row
+        conn.execute("PRAGMA foreign_keys = ON;")
+        return conn
+
     def get_session(self) -> Any:
         """Return a fresh database session instance."""
         if not self._session_factory:
             self.initialize()
         return self._session_factory()
 
-    def execute_query(self, query: str, params: Optional[dict] = None) -> Any:
+    def execute_query(self, query: str, params: Optional[Any] = None) -> List[Dict[str, Any]]:
+        """
+        Execute a read-only SQL query and return results as a list of dictionaries.
+        Uses native SQLite connection for maximum speed and zero dependencies.
+        """
+        conn = self.get_raw_connection()
+        try:
+            cursor = conn.cursor()
+            if params:
+                cursor.execute(query, params)
+            else:
+                cursor.execute(query)
+            rows = cursor.fetchall()
+            return [dict(row) for row in rows]
+        finally:
+            conn.close()
+
+    def execute_query_df(self, query: str, params: Optional[dict] = None) -> Any:
         """
         Execute a read-only SQL query and return results as a Pandas DataFrame.
         """
@@ -93,7 +129,13 @@ class DatabaseManager:
                 self.initialize()
             return pd.read_sql_query(query, con=self._engine, params=params)
         except ImportError:
-            raise RuntimeError("Pandas and SQLAlchemy are required for query execution.")
+            # Fallback to constructing DataFrame from execute_query if pandas is available
+            try:
+                import pandas as pd
+                records = self.execute_query(query, params)
+                return pd.DataFrame(records)
+            except ImportError:
+                raise RuntimeError("Pandas is required to return DataFrame format.")
 
     def close(self) -> None:
         """Dispose connection pools and release all system resources."""
