@@ -13,7 +13,7 @@ if str(root_dir) not in sys.path:
 
 from ecommerce_iq.database.connection import DatabaseManager
 from ecommerce_iq.ai.interpretation import AnalyticsInterpreter
-from ui.pages.reviews_view import render_reviews_page
+from ui.views.reviews_view import render_reviews_page
 
 
 def main() -> None:

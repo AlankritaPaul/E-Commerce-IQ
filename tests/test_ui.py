@@ -173,47 +173,47 @@ class TestUIPages(unittest.TestCase):
 
     def test_sales_view_execution(self):
         """Verify sales_view renders without exceptions."""
-        from ui.pages.sales_view import render_sales_page
+        from ui.views.sales_view import render_sales_page
         render_sales_page(self.db, self.interpreter)
 
     def test_products_view_execution(self):
         """Verify products_view renders without exceptions."""
-        from ui.pages.products_view import render_products_page
+        from ui.views.products_view import render_products_page
         render_products_page(self.db, self.interpreter)
 
     def test_customers_view_execution(self):
         """Verify customers_view renders without exceptions."""
-        from ui.pages.customers_view import render_customers_page
+        from ui.views.customers_view import render_customers_page
         render_customers_page(self.db, self.interpreter)
 
     def test_reviews_view_execution(self):
         """Verify reviews_view renders without exceptions."""
-        from ui.pages.reviews_view import render_reviews_page
+        from ui.views.reviews_view import render_reviews_page
         render_reviews_page(self.db, self.interpreter)
 
     def test_returns_view_execution(self):
         """Verify returns_view renders without exceptions."""
-        from ui.pages.returns_view import render_returns_page
+        from ui.views.returns_view import render_returns_page
         render_returns_page(self.db, self.interpreter)
 
     def test_diagnosis_view_execution(self):
         """Verify diagnosis_view renders without exceptions."""
-        from ui.pages.diagnosis_view import render_diagnosis_page
+        from ui.views.diagnosis_view import render_diagnosis_page
         render_diagnosis_page(self.db, self.interpreter)
 
     def test_foundation_view_execution(self):
         """Verify foundation_view renders without exceptions."""
-        from ui.pages.foundation_view import render_foundation_page
+        from ui.views.foundation_view import render_foundation_page
         render_foundation_page(self.db)
 
     def test_dataset_view_execution(self):
         """Verify dataset_view renders without exceptions."""
-        from ui.pages.dataset_view import render_dataset_page
+        from ui.views.dataset_view import render_dataset_page
         render_dataset_page(self.db)
 
     def test_interpretation_view_execution(self):
         """Verify interpretation_view renders without exceptions."""
-        from ui.pages.interpretation_view import render_interpretation_page
+        from ui.views.interpretation_view import render_interpretation_page
         render_interpretation_page(self.db, self.interpreter)
 
 
