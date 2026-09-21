@@ -78,6 +78,24 @@ THEMES: Dict[str, Dict[str, Any]] = {
                 letter-spacing: 0.02em !important;
             }
 
+            @keyframes shimmerCorp {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
+            }
+            .animated-hero-title {
+                background: linear-gradient(90deg, #1E3A8A 0%, #2563EB 35%, #059669 70%, #1E3A8A 100%) !important;
+                background-size: 300% auto !important;
+                -webkit-background-clip: text !important;
+                -webkit-text-fill-color: transparent !important;
+                animation: shimmerCorp 6s ease-in-out infinite !important;
+                font-size: 3rem !important;
+                font-weight: 850 !important;
+                letter-spacing: -0.03em !important;
+                margin: 0 !important;
+                display: inline-block !important;
+            }
+
             /* Dedicated Search Option Card - Corporate */
             .search-card-wrapper {
                 background: linear-gradient(135deg, #FFFFFF 0%, #F0F7FF 100%) !important;
@@ -220,6 +238,25 @@ THEMES: Dict[str, Dict[str, Any]] = {
                 color: #22D3EE !important;
                 text-shadow: 0 0 15px rgba(34, 211, 238, 0.4) !important;
                 letter-spacing: 0.02em !important;
+            }
+
+            @keyframes shimmerDark {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
+            }
+            .animated-hero-title {
+                background: linear-gradient(90deg, #22D3EE 0%, #A855F7 35%, #EC4899 70%, #22D3EE 100%) !important;
+                background-size: 300% auto !important;
+                -webkit-background-clip: text !important;
+                -webkit-text-fill-color: transparent !important;
+                animation: shimmerDark 6s ease-in-out infinite !important;
+                font-size: 3rem !important;
+                font-weight: 850 !important;
+                letter-spacing: -0.03em !important;
+                margin: 0 !important;
+                display: inline-block !important;
+                text-shadow: 0 0 25px rgba(34, 211, 238, 0.4) !important;
             }
 
             /* Dedicated Search Option Card - Dark */
@@ -371,6 +408,24 @@ THEMES: Dict[str, Dict[str, Any]] = {
                 font-weight: 700 !important;
                 color: #B45309 !important;
                 letter-spacing: 0.03em !important;
+            }
+
+            @keyframes shimmerLuxe {
+                0% { background-position: 0% 50%; }
+                50% { background-position: 100% 50%; }
+                100% { background-position: 0% 50%; }
+            }
+            .animated-hero-title {
+                background: linear-gradient(90deg, #B45309 0%, #D97706 35%, #F59E0B 70%, #B45309 100%) !important;
+                background-size: 300% auto !important;
+                -webkit-background-clip: text !important;
+                -webkit-text-fill-color: transparent !important;
+                animation: shimmerLuxe 6s ease-in-out infinite !important;
+                font-size: 3rem !important;
+                font-weight: 850 !important;
+                letter-spacing: -0.02em !important;
+                margin: 0 !important;
+                display: inline-block !important;
             }
 
             /* Dedicated Search Option Card - Luxury */

@@ -37,10 +37,10 @@ def render_landing_page(db: DatabaseManager) -> None:
         st.markdown(
             f"""
             <div style="padding-top: 0.5rem;">
-                <h1 style="margin: 0; font-size: 2.8rem; font-weight: 800; letter-spacing: -0.03em; color: {theme['primary_color']};">
+                <h1 class="animated-hero-title">
                     E-COMMERCE IQ
                 </h1>
-                <div style="font-size: 1.15rem; font-weight: 600; color: {theme['secondary_text']}; margin-top: 0.2rem;">
+                <div style="font-size: 1.15rem; font-weight: 600; color: {theme['secondary_text']}; margin-top: 0.35rem;">
                     Executive Decision Intelligence & Conversational Analytics Platform
                 </div>
             </div>

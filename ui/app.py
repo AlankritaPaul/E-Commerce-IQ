@@ -78,6 +78,21 @@ def init_app() -> None:
         initial_sidebar_state="expanded"
     )
 
+    # SEO, Searchability & Social OpenGraph Metadata
+    st.markdown(
+        """
+        <meta name="title" content="E-Commerce IQ | Executive BI & Decision Intelligence Platform">
+        <meta name="description" content="Conversational BI, Shoplytic Copilot, deterministic financial analytics, and SKU unit economics for e-commerce founders and operators by Alankrita Paul.">
+        <meta name="keywords" content="E-Commerce IQ, Shoplytic, Business Intelligence, Shopify Analytics, Decision Intelligence, Alankrita Paul, Ecommerce BI">
+        <meta name="author" content="Alankrita Paul">
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="E-Commerce IQ | Executive BI Platform">
+        <meta property="og:description" content="AI Decision Intelligence & Deterministic Financial Analytics for E-Commerce Founders by Alankrita Paul.">
+        <meta property="og:image" content="https://raw.githubusercontent.com/AlankritaPaul/E-Commerce-IQ/main/docs/images/app_logo.png">
+        """,
+        unsafe_allow_html=True
+    )
+
 
 def get_db_manager() -> DatabaseManager:
     """Cached connection provider for database operations."""
