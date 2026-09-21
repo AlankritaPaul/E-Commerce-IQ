@@ -12,6 +12,7 @@ from ecommerce_iq.ai.text_to_sql import TextToSQLGenerator
 from ecommerce_iq.ai.advisor import BusinessAdvisor
 from ecommerce_iq.ai.llm_client import LLMClient
 from ecommerce_iq.ai.query_engine import NaturalLanguageQueryEngine
+from ecommerce_iq.ai.interpretation import AnalyticsInterpreter, NumericalGroundingVerifier
 
 __all__ = [
     "SentimentAnalyzer",
@@ -20,4 +21,7 @@ __all__ = [
     "BusinessAdvisor",
     "LLMClient",
     "NaturalLanguageQueryEngine",
+    "AnalyticsInterpreter",
+    "NumericalGroundingVerifier",
 ]
+

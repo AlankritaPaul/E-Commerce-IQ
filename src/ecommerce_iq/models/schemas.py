@@ -364,3 +364,35 @@ class RecommendationItem:
     title: str
     action: str
     expected_impact: str
+
+
+# ==============================================================================
+# AI Interpretation & Grounding Schemas
+# ==============================================================================
+
+@dataclass
+class EvidenceCitation:
+    """Exact grounding citation tying an analytical claim to a verified metric."""
+    metric_name: str
+    verified_value: float
+    formatted_value: str
+    source_attribute: str
+    context: str = ""
+
+
+@dataclass
+class AnalyticalInterpretation:
+    """
+    AI interpretation layer response explaining verified analytical results
+    in simple business language without hallucination.
+    """
+    title: str
+    summary: str
+    key_findings: List[str] = field(default_factory=list)
+    evidence_based_insights: List[str] = field(default_factory=list)
+    actionable_recommendations: List[str] = field(default_factory=list)
+    evidence_citations: List[EvidenceCitation] = field(default_factory=list)
+    is_grounded: bool = True
+    unverified_claims: List[str] = field(default_factory=list)
+    source_analytics_type: str = "Unknown"
+
