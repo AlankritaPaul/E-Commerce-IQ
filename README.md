@@ -1,12 +1,40 @@
-# E-Commerce IQ
+<div align="center">
 
-[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Architecture: Dual-Engine BI](https://img.shields.io/badge/Architecture-Dual--Engine%20BI-success.svg)]()
+# E-COMMERCE IQ
+
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=34&duration=2500&pause=1000&color=1E3A8A&center=true&vCenter=true&width=650&height=60&lines=E-COMMERCE+IQ;AI-Powered+Decision+Intelligence;Deterministic+SQL+%2B+AI+Copilot;Executive+Business+Analytics)](https://github.com/AlankritaPaul/E-Commerce-IQ)
+
+<img src="docs/images/animated_title.svg" width="650" alt="E-Commerce IQ Animated Title" />
+
+<br/>
+
+[![Python](https://img.shields.io/badge/Language-Python%203.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![SQL](https://img.shields.io/badge/Language-SQL%20(SQLite%20%2F%20PostgreSQL)-4479A1?style=for-the-badge&logo=sqlite&logoColor=white)](https://www.sqlite.org/)
+[![Architecture](https://img.shields.io/badge/Architecture-Dual--Engine%20BI-059669?style=for-the-badge)]()
+[![Tests](https://img.shields.io/badge/Tests-117%20Passing-success?style=for-the-badge)]()
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+
+<br/><br/>
+
+<img src="docs/images/ecommerce_iq_hero.jpg" width="95%" alt="E-Commerce IQ Executive BI Dashboard & AI Copilot Preview" style="border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.25);" />
+
+<br/>
+<em>Executive Business Intelligence & Decision Support Platform with Deterministic Analytics & Conversational AI Copilot</em>
+
+</div>
+
+---
 
 **E-Commerce IQ** is an enterprise-grade, AI-powered Business Intelligence and Decision Support System built for e-commerce business owners, operators, and executives. 
 
 Unlike conventional dashboards that only display static graphs, or generative AI chatbots prone to hallucinating numbers, E-Commerce IQ pairs a **deterministic SQL analytical calculation engine** with an **intelligent conversational AI copilot**. It allows business leaders to query their underlying business metrics using natural language and receive verified, data-backed financial figures paired with strategic diagnostic insights.
+
+---
+
+## 🛠️ Core Languages
+
+- **Python (3.10+)**: Powers backend analytics calculation engines, statistical anomaly detection, natural language processing, LLM orchestration, Streamlit UI, and automated test suites.
+- **SQL (Relational SQL / SQLite / PostgreSQL Dialects)**: The deterministic foundation for all financial fact storage, data modeling, multi-table aggregations, time-series windowing, and safe Text-to-SQL generation.
 
 ---
 
@@ -88,6 +116,59 @@ E-Commerce IQ is architected around a **Dual-Engine BI Pattern**:
                   | Orders, Items, Products, Customers, Reviews  |
                   +----------------------------------------------+
 ```
+
+---
+
+## 🗄️ Where and How SQL is Used in E-Commerce IQ
+
+SQL serves as the **single source of truth** and the deterministic engine across all analytical stages. Here is an overview of where SQL is implemented and how it operates:
+
+### 1. Relational Data Modeling & Integrity (`src/ecommerce_iq/database/schema.sql`)
+- **Normalized Schema**: 8 core relational tables (`customers`, `categories`, `products`, `orders`, `order_items`, `payments`, `returns`, `reviews`, `review_insights`, and `sales`).
+- **Integrity Constraints**: Enforces foreign keys (`ON DELETE CASCADE`), `CHECK` constraints (valid CSAT ratings `1-5`, positive prices, non-negative quantities), and performance indexes on `order_date`, `customer_id`, `product_id`.
+- **Analytical Views with CTEs**: Defines pre-aggregated analytical views (`v_product_performance`, `v_daily_sales_summary`) using Common Table Expressions (`WITH` clauses) to eliminate join fan-out.
+
+### 2. High-Performance Native Query Gateway (`src/ecommerce_iq/database/connection.py`)
+- **Direct Parameterized SQL**: `DatabaseManager.execute_query(sql, params)` runs raw SQL using Python's native `sqlite3` driver and `sqlite3.Row` dictionaries.
+- **Connection Optimization**: Configures `PRAGMA foreign_keys = ON;` and thread-safe execution without ORM overhead.
+
+### 3. Financial KPIs & Time-Series Aggregations (`src/ecommerce_iq/analytics/kpis.py`)
+- **Exact Accounting Formulations**:
+  ```sql
+  SELECT 
+      ROUND(SUM(oi.total_price), 2) AS gross_sales,
+      ROUND(SUM(oi.total_price) - COALESCE(SUM(r.refund_amount), 0), 2) AS net_revenue,
+      COUNT(DISTINCT o.order_id) AS total_orders,
+      ROUND(SUM(oi.total_price) / COUNT(DISTINCT o.order_id), 2) AS aov
+  FROM orders o
+  JOIN order_items oi ON o.order_id = oi.order_id
+  LEFT JOIN returns r ON o.order_id = r.order_id AND r.status = 'Approved';
+  ```
+- **Monthly Trajectory Windowing**: Uses `strftime('%Y-%m', o.order_date)` to aggregate trends over the 14 operating months.
+
+### 4. SKU Unit Economics & Classification (`src/ecommerce_iq/analytics/products.py`)
+- **Product Profitability & Margins**: Calculates profit margin per SKU using `ROUND((p.price - p.cost_price) * SUM(oi.quantity), 2)`.
+- **Dead-Stock Inventory Detection**: Identifies slow-moving or unpurchased catalog items using `LEFT JOIN` and filtering for `NULL` order items.
+
+### 5. Customer Behavior & RFM Quintiles (`src/ecommerce_iq/analytics/customers.py`)
+- **Customer Lifetime Value (LTV)**: Aggregates total historical spend per customer account.
+- **Order Frequency Distribution**: Uses SQL `CASE` statements to categorize customers into brackets (`1 Order`, `2-3 Orders`, `4-6 Orders`, `7-9 Orders`, `10+ Orders`).
+- **Recency Calculation**: Computes days elapsed since last purchase via `CAST(julianday('now') - julianday(MAX(order_date)) AS INTEGER)`.
+
+### 6. Returns & Refund Leakage Tracking (`src/ecommerce_iq/analytics/returns.py`)
+- **Return Rate by SKU**: Computes returned unit percentage:
+  ```sql
+  ROUND((COALESCE(SUM(ret.quantity), 0) * 100.0 / SUM(oi.quantity)), 2) AS return_rate
+  ```
+- **RMA Reasons Breakdown**: Evaluates return incident counts and bottom-line dollar refund leakage grouped by stated customer reason.
+
+### 7. Natural-Language Text-to-SQL Copilot (`src/ecommerce_iq/ai/text_to_sql.py`)
+- **Schema-Grounded Query Translation**: Automatically maps plain-English executive questions into syntactically valid SQL queries targeting relevant entities and date ranges.
+
+### 8. SQL Security Guardrails & AST Verification (`src/ecommerce_iq/ai/sql_guardrails.py`)
+- **AST Token Inspection**: Analyzes queries with Abstract Syntax Tree parsers to strictly enforce read-only `SELECT` and `WITH` statements.
+- **Mutation & Injection Blocking**: Instantly blocks destructive tokens (`DROP`, `DELETE`, `UPDATE`, `INSERT`, `ALTER`, `TRUNCATE`, `--`, `;`).
+- **Table Whitelisting & Limit Clamping**: Verifies that queries only access authorized business tables and injects or clamps `LIMIT` clauses to guarantee bounded execution.
 
 ---
 
