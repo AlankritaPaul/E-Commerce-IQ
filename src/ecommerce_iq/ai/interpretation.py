@@ -338,6 +338,27 @@ class AnalyticsInterpreter:
                 source_analytics_type="List[ProductPerformanceMetric]"
             )
 
+        # Normalize items if passed as dictionaries from database queries
+        normalized: List[ProductPerformanceMetric] = []
+        for item in products:
+            if isinstance(item, dict):
+                normalized.append(
+                    ProductPerformanceMetric(
+                        product_id=int(item.get("product_id", 0)),
+                        sku=str(item.get("sku", "")),
+                        title=str(item.get("title", item.get("product_name", "Product"))),
+                        category_name=str(item.get("category_name", "General")),
+                        units_sold=int(item.get("units_sold", 0)),
+                        total_revenue=float(item.get("total_revenue", item.get("net_revenue", item.get("gross_revenue", 0.0)))),
+                        total_returns=int(item.get("total_returns", item.get("units_returned", 0))),
+                        return_rate_pct=float(item.get("return_rate_pct", 0.0)),
+                        avg_rating=float(item.get("avg_rating", item.get("average_rating", 0.0)))
+                    )
+                )
+            else:
+                normalized.append(item)
+        products = normalized
+
         sorted_by_rev = sorted(products, key=lambda p: p.total_revenue, reverse=True)
         top_sku = sorted_by_rev[0]
         total_catalog_rev = sum(p.total_revenue for p in products)
