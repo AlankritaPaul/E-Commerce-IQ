@@ -11,8 +11,6 @@
 [![Python](https://img.shields.io/badge/Language-Python%203.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![SQL](https://img.shields.io/badge/Language-SQL%20(SQLite%20%2F%20PostgreSQL)-4479A1?style=for-the-badge&logo=sqlite&logoColor=white)](https://www.sqlite.org/)
 [![Architecture](https://img.shields.io/badge/Architecture-Dual--Engine%20BI-059669?style=for-the-badge)]()
-[![Tests](https://img.shields.io/badge/Tests-117%20Passing-success?style=for-the-badge)]()
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 <br/><br/>
 
