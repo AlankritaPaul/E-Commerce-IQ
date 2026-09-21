@@ -11,7 +11,15 @@ from ecommerce_iq.ai.query_engine import NaturalLanguageQueryEngine
 from ui.components.chat import render_copilot_chat
 
 
-def render_copilot_page(db: DatabaseManager) -> None:
+from typing import Any, Optional
+
+
+def render_copilot_page(db_or_engine: Optional[Any] = None) -> None:
     """Render full conversational AI Copilot page."""
-    query_engine = NaturalLanguageQueryEngine(db_manager=db)
+    if isinstance(db_or_engine, NaturalLanguageQueryEngine):
+        query_engine = db_or_engine
+    elif isinstance(db_or_engine, DatabaseManager):
+        query_engine = NaturalLanguageQueryEngine(db_manager=db_or_engine)
+    else:
+        query_engine = NaturalLanguageQueryEngine()
     render_copilot_chat(query_engine)
