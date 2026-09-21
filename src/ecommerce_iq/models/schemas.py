@@ -308,13 +308,52 @@ class AIQueryResponse:
 
 
 @dataclass
+class MetricEvidence:
+    """Quantitative evidence backing a diagnostic finding."""
+    metric_name: str
+    current_value: float
+    baseline_value: float
+    absolute_change: float
+    percentage_change: float
+    unit: str  # '$', 'units', 'orders', '%', 'stars'
+    impact_direction: str  # 'Negative', 'Positive', 'Neutral'
+    significance: str  # 'Major Driver', 'Contributing Factor', 'Secondary'
+
+
+@dataclass
+class ProductDeclineFactor:
+    """Product-level driver contributing to top-line decline."""
+    product_id: int
+    sku: str
+    title: str
+    category_name: str
+    current_revenue: float
+    baseline_revenue: float
+    revenue_loss: float
+    percentage_change: float
+    units_sold_change: int
+    return_rate_pct: float
+    average_rating: float
+    top_complaint_theme: str
+    primary_driver_type: str  # 'Volume Drop', 'Quality/Return Defect', 'Pricing/AOV Shift'
+
+
+@dataclass
 class DiagnosticReport:
-    """Automated root-cause analysis report for business performance shifts."""
+    """Automated root-cause analysis report for business performance shifts with structured evidence."""
     title: str
     period_analyzed: str
     primary_finding: str
+    baseline_period: str = "Previous Period"
+    severity: str = "Informational"  # 'Critical', 'High', 'Moderate', 'Informational'
+    net_revenue_change: float = 0.0
+    net_revenue_change_pct: float = 0.0
+    metric_evidences: List[MetricEvidence] = field(default_factory=list)
+    top_declining_products: List[ProductDeclineFactor] = field(default_factory=list)
     contributing_factors: List[str] = field(default_factory=list)
+    customer_feedback_signals: List[str] = field(default_factory=list)
     recommended_actions: List[str] = field(default_factory=list)
+
 
 
 @dataclass
