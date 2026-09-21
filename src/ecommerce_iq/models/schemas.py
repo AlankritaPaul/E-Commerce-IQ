@@ -65,6 +65,70 @@ class ReturnReasonMetric:
 
 
 @dataclass
+class ProductReturnMetric:
+    """Detailed SKU-level return rate, refund amount, and risk classification."""
+    product_id: int
+    sku: str
+    title: str
+    category_name: str
+    units_sold: int
+    units_returned: int
+    return_rate_pct: float
+    gross_revenue: float
+    refund_amount: float
+    net_revenue: float
+    refund_ratio_pct: float
+    primary_return_reason: str
+    risk_level: str  # 'High Risk' (>= 12%), 'Moderate Risk' (>= 7%), 'Normal' (< 7%)
+
+
+@dataclass
+class CategoryReturnMetric:
+    """Category-level return aggregation and financial leakage metrics."""
+    category_id: int
+    category_name: str
+    units_sold: int
+    units_returned: int
+    return_rate_pct: float
+    total_refunds: float
+    gross_revenue: float
+    refund_ratio_pct: float
+    primary_return_reason: str
+
+
+@dataclass
+class ReturnsOverallSummary:
+    """Platform-wide returns and refunds executive scorecard."""
+    total_return_events: int
+    total_units_returned: int
+    total_refund_amount: float
+    platform_return_rate_pct: float
+    refund_ratio_pct: float
+    high_risk_products_count: int
+    top_return_reasons: List[ReturnReasonMetric] = field(default_factory=list)
+
+
+@dataclass
+class ConnectedReturnInsight:
+    """Triangulation connecting sales volume, return rate, RMA reasons, and customer review sentiment."""
+    product_id: int
+    sku: str
+    title: str
+    category_name: str
+    units_sold: int
+    units_returned: int
+    return_rate_pct: float
+    refund_amount: float
+    primary_return_reason: str
+    average_rating: float
+    total_reviews: int
+    negative_review_pct: float
+    top_review_complaint: str
+    correlation_verdict: str
+
+
+
+@dataclass
 class ReviewSentimentSummary:
     """Overall review sentiment breakdown."""
     total_reviews: int
