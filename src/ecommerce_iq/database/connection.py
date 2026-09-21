@@ -20,7 +20,7 @@ class DatabaseManager:
 
     def __init__(self, database_url: Optional[str] = None) -> None:
         self.settings = get_settings()
-        self.database_url = database_url or self.settings.database_url
+        self.database_url = database_url or getattr(self.settings, "resolved_database_url", self.settings.database_url)
         self._engine: Optional[Any] = None
         self._session_factory: Optional[Any] = None
 

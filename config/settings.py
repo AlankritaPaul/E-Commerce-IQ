@@ -47,6 +47,16 @@ try:
             """Return the absolute path to the project root directory."""
             return Path(__file__).resolve().parent.parent
 
+        @property
+        def resolved_database_url(self) -> str:
+            """Return database URL with relative SQLite paths resolved to project root."""
+            if self.database_url.startswith("sqlite:///"):
+                path_str = self.database_url[len("sqlite:///"):]
+                p = Path(path_str)
+                if not p.is_absolute():
+                    return f"sqlite:///{(self.project_root / p).resolve().as_posix()}"
+            return self.database_url
+
 except ImportError:
     # Fallback configuration object if pydantic-settings is not yet installed
     class Settings:  # type: ignore[no-redef]
@@ -69,6 +79,16 @@ except ImportError:
         def project_root(self) -> Path:
             """Return the absolute path to the project root directory."""
             return Path(__file__).resolve().parent.parent
+
+        @property
+        def resolved_database_url(self) -> str:
+            """Return database URL with relative SQLite paths resolved to project root."""
+            if self.database_url.startswith("sqlite:///"):
+                path_str = self.database_url[len("sqlite:///"):]
+                p = Path(path_str)
+                if not p.is_absolute():
+                    return f"sqlite:///{(self.project_root / p).resolve().as_posix()}"
+            return self.database_url
 
 
 @lru_cache()
