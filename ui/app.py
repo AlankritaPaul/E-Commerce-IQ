@@ -190,7 +190,19 @@ def main() -> None:
         "📜 Terms & Conditions"
     ]
 
-    selected_view = st.sidebar.radio("Navigation Menu", nav_options, index=0)
+    if "selected_nav" not in st.session_state:
+        st.session_state.selected_nav = "🏠 Home"
+
+    if st.session_state.get("jump_to_copilot"):
+        st.session_state.jump_to_copilot = False
+        st.session_state.selected_nav = "🤖 Shoplytic Copilot"
+
+    current_nav_idx = 0
+    if st.session_state.selected_nav in nav_options:
+        current_nav_idx = nav_options.index(st.session_state.selected_nav)
+
+    selected_view = st.sidebar.radio("Navigation Menu", nav_options, index=current_nav_idx)
+    st.session_state.selected_nav = selected_view
 
     st.sidebar.markdown("---")
 

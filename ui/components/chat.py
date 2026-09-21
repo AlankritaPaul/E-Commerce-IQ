@@ -3,8 +3,8 @@ Conversational AI Copilot: Shoplytic.
 
 Features:
 - Branded 'Shoplytic' handwritten typography & dedicated logo
-- Explicit Search input & Search button
-- Search history tracking with quick re-run chips
+- Themed Search Option container with primary search button & input
+- Themed Search History panel with badges, query chips, and clear history
 - Automatic dynamic interactive Plotly chart generation for query results
 - Strict SQL safety inspection & tabular data auditing
 """
@@ -138,7 +138,7 @@ def generate_dynamic_chart(data: List[Dict[str, Any]], query: str, theme: Dict[s
 def render_copilot_chat(query_engine: Optional[NaturalLanguageQueryEngine] = None) -> None:
     """
     Render interactive Shoplytic Copilot with handwritten branding,
-    dedicated search button, search history, and automatic data graph generation.
+    themed search option container, themed search history, and automatic data graph generation.
     """
     theme = get_current_theme()
     engine = query_engine or NaturalLanguageQueryEngine()
@@ -187,29 +187,20 @@ def render_copilot_chat(query_engine: Optional[NaturalLanguageQueryEngine] = Non
 
     st.markdown("---")
 
-    # 2. Search History Panel (Recent Searches)
-    if st.session_state.search_history:
-        with st.expander("🕒 Recent Search History", expanded=False):
-            st.caption("Click any past search to re-run it:")
-            hist_cols = st.columns(3)
-            for h_idx, past_q in enumerate(reversed(st.session_state.search_history[-6:])):
-                col = hist_cols[h_idx % 3]
-                if col.button(f"🔍 {past_q[:35]}...", key=f"hist_btn_{h_idx}", use_container_width=True):
-                    st.session_state.active_search_prompt = past_q
+    # 2. Dedicated Search Option Card (Themed Background & Styling)
+    st.markdown(
+        f"""
+        <div class="search-card-wrapper">
+            <div class="search-card-title">🔍 Search Store Intelligence</div>
+            <div class="search-card-subtitle">
+                Enter any natural-language query to query your database records, calculate financial metrics, and generate dynamic charts:
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-    # 3. Suggested Questions Chips
-    st.markdown("**💡 Suggested Inquiries:**")
-    cols = st.columns(3)
-    suggested_prompt = None
-    for idx, prompt in enumerate(SAMPLE_QUESTIONS):
-        col = cols[idx % 3]
-        if col.button(prompt, key=f"sugg_btn_{idx}", use_container_width=True):
-            suggested_prompt = prompt
-
-    # 4. Search Input Bar + Dedicated Search Button
-    st.markdown("<br/>", unsafe_allow_html=True)
     scol1, scol2 = st.columns([5, 1])
-
     with scol1:
         search_query_input = st.text_input(
             "Search query",
@@ -219,18 +210,76 @@ def render_copilot_chat(query_engine: Optional[NaturalLanguageQueryEngine] = Non
         )
 
     with scol2:
-        search_button_clicked = st.button("🔍 Search", key="btn_exec_search", use_container_width=True)
+        search_button_clicked = st.button("🔍 Search", key="btn_exec_search", type="primary", use_container_width=True)
 
-    # Chat Input at bottom for conversational flow
-    chat_box_input = st.chat_input("Or type your question here...")
+    # 3. Dedicated Search History Panel (Themed Background & Chips)
+    num_history = len(st.session_state.search_history)
+    history_badge = (
+        f'<span class="search-badge">{num_history} Saved</span>'
+        if num_history > 0
+        else '<span class="search-badge" style="opacity: 0.7;">0 Saved</span>'
+    )
+
+    st.markdown(
+        f"""
+        <div class="search-history-wrapper">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem;">
+                <div style="font-weight: 700; font-size: 0.95rem; color: {theme['text_color']};">
+                    🕒 Recent Search History {history_badge}
+                </div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    history_prompt_to_run = None
+    if num_history > 0:
+        h_ctrl1, h_ctrl2 = st.columns([5, 1])
+        with h_ctrl2:
+            if st.button("🗑️ Clear", key="btn_clear_search_hist", use_container_width=True, help="Clear recent search history"):
+                st.session_state.search_history = []
+                st.rerun()
+
+        with h_ctrl1:
+            st.caption("Click any past search to re-run it instantly:")
+            hist_cols = st.columns(3)
+            for h_idx, past_q in enumerate(reversed(st.session_state.search_history[-6:])):
+                col = hist_cols[h_idx % 3]
+                if col.button(f"🔍 {past_q[:35]}...", key=f"hist_btn_{h_idx}", use_container_width=True):
+                    history_prompt_to_run = past_q
+    else:
+        st.markdown(
+            f"""
+            <div style="font-size: 0.84rem; color: {theme['secondary_text']}; font-style: italic; margin-top: -0.6rem; margin-bottom: 1rem; padding-left: 0.4rem;">
+                No search history in this session yet. Type a question above or select a suggestion below to begin.
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    # 4. Suggested Inquiries Section
+    st.markdown("**💡 Suggested Inquiries:**")
+    cols = st.columns(3)
+    suggested_prompt = None
+    for idx, prompt in enumerate(SAMPLE_QUESTIONS):
+        col = cols[idx % 3]
+        if col.button(prompt, key=f"sugg_btn_{idx}", use_container_width=True):
+            suggested_prompt = prompt
+
+    # Chat Input at bottom for conversational follow-up
+    chat_box_input = st.chat_input("Or continue conversation with Shoplytic...")
 
     # Determine prompt to run
     prompt_to_run = (
         suggested_prompt
+        or history_prompt_to_run
         or (search_query_input if search_button_clicked and search_query_input else None)
         or chat_box_input
         or st.session_state.pop("active_search_prompt", None)
     )
+
+    st.markdown("<br/>", unsafe_allow_html=True)
 
     # 5. Display Conversation History with Dynamic Graphs
     for msg in st.session_state.chat_history:

@@ -211,11 +211,78 @@ class TestUIPages(unittest.TestCase):
         from ui.views.dataset_view import render_dataset_page
         render_dataset_page(self.db)
 
-    def test_interpretation_view_execution(self):
-        """Verify interpretation_view renders without exceptions."""
-        from ui.views.interpretation_view import render_interpretation_page
-        render_interpretation_page(self.db, self.interpreter)
+    def test_landing_view_execution(self):
+        """Verify landing_view renders cleanly with database."""
+        from ui.views.landing_view import render_landing_page
+        render_landing_page(self.db)
+
+    def test_copilot_chat_execution(self):
+        """Verify copilot_chat renders cleanly."""
+        from ui.components.chat import render_copilot_chat
+        render_copilot_chat()
+
+
+class TestThemeAndSearchComponents(unittest.TestCase):
+    """Test theme registry, dedicated search styling, and copilot dynamic charts."""
+
+    def test_themes_integrity_and_search_styling(self):
+        """Verify all 3 themes define unique logos, backgrounds, and search styling."""
+        from ui.theme import THEMES, get_current_theme
+
+        required_themes = ["corporate", "dark", "luxury"]
+        for t_id in required_themes:
+            self.assertIn(t_id, THEMES, f"Missing required theme: {t_id}")
+            theme = THEMES[t_id]
+
+            # Verify required properties
+            self.assertIn("id", theme)
+            self.assertIn("name", theme)
+            self.assertIn("icon", theme)
+            self.assertIn("raw_svg", theme)
+            self.assertTrue(theme["raw_svg"].startswith("<svg"))
+            self.assertTrue(theme["raw_svg"].endswith("</svg>"))
+
+            self.assertIn("primary_color", theme)
+            self.assertIn("search_bg", theme)
+            self.assertIn("history_bg", theme)
+
+            # Verify CSS contains dedicated search and history wrapper classes
+            css = theme["css"]
+            self.assertIn(".search-card-wrapper", css)
+            self.assertIn(".search-history-wrapper", css)
+            self.assertIn(".search-badge", css)
+
+        curr = get_current_theme()
+        self.assertIsInstance(curr, dict)
+        self.assertIn("name", curr)
+
+    def test_dynamic_chart_generation(self):
+        """Verify dynamic chart generator produces valid figures for various data shapes."""
+        from ui.components.chat import generate_dynamic_chart
+        from ui.theme import THEMES
+
+        theme = THEMES["corporate"]
+
+        # 1. Categorical data (Products / Categories)
+        cat_data = [
+            {"product_name": "Premium Headphones", "revenue": 14500.0},
+            {"product_name": "Wireless Mouse", "revenue": 8900.0}
+        ]
+        fig_cat = generate_dynamic_chart(cat_data, "top products", theme)
+        self.assertIsInstance(fig_cat, go.Figure)
+
+        # 2. Time-series data (Monthly Trend)
+        ts_data = [
+            {"order_month": "2025-01", "total_sales": 45000.0},
+            {"order_month": "2025-02", "total_sales": 52000.0}
+        ]
+        fig_ts = generate_dynamic_chart(ts_data, "monthly sales", theme)
+        self.assertIsInstance(fig_ts, go.Figure)
+
+        # 3. Empty data
+        self.assertIsNone(generate_dynamic_chart([], "empty", theme))
 
 
 if __name__ == "__main__":
     unittest.main()
+

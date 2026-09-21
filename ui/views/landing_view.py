@@ -4,12 +4,12 @@ Front Landing Page for E-Commerce IQ.
 Features:
 - Official uploaded 'eC' brand logo
 - Animated glowing/typing title, executive quote & concise description
+- Themed Search Option container & Search History gateway
 - Live e-commerce background data & operational statistics
 - Core business impact pillars (non-repetitive)
 - Interactive revenue trajectory graph preview
 """
 
-import os
 from pathlib import Path
 import streamlit as st
 
@@ -51,7 +51,7 @@ def render_landing_page(db: DatabaseManager) -> None:
     # 2. Executive Quote Banner
     st.markdown(
         f"""
-        <div style="background: {theme['card_bg']}; border-left: 4px solid {theme['accent_color']}; border-radius: 8px; padding: 1.2rem; margin: 1.5rem 0 1rem 0; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
+        <div style="background: {theme['card_bg']}; border-left: 4px solid {theme['accent_color']}; border-radius: 8px; padding: 1.2rem; margin: 1.5rem 0 1.2rem 0; box-shadow: 0 4px 12px rgba(0,0,0,0.03);">
             <div style="font-size: 1.1rem; font-style: italic; color: {theme['text_color']}; line-height: 1.5;">
                 “Turning complex transactional data into high-conviction decisions — pairing deterministic financial accuracy with conversational AI intelligence.”
             </div>
@@ -62,6 +62,81 @@ def render_landing_page(db: DatabaseManager) -> None:
         """,
         unsafe_allow_html=True
     )
+
+    # 2.5 Front Page Search Option (Themed Search Card & History)
+    st.markdown(
+        f"""
+        <div class="search-card-wrapper">
+            <div class="search-card-title">🔍 Search Store Intelligence with Shoplytic</div>
+            <div class="search-card-subtitle">
+                Search your store's sales, SKU profit margins, customer retention, or return leakage directly from the front page:
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    lp_col1, lp_col2 = st.columns([5, 1])
+    with lp_col1:
+        landing_query = st.text_input(
+            "Landing Search Query",
+            placeholder="Search store data (e.g. 'What are our top 5 best selling products?')...",
+            label_visibility="collapsed",
+            key="landing_search_input"
+        )
+    with lp_col2:
+        landing_btn = st.button("🔍 Search", key="btn_landing_search", type="primary", use_container_width=True)
+
+    # Quick search shortcut chips
+    q_col1, q_col2, q_col3, q_col4 = st.columns(4)
+    quick_prompt = None
+    with q_col1:
+        if st.button("🏆 Top 5 Products", key="landing_qp_1", use_container_width=True):
+            quick_prompt = "What are our top 5 best selling products?"
+    with q_col2:
+        if st.button("📦 Category Sales", key="landing_qp_2", use_container_width=True):
+            quick_prompt = "What is our revenue breakdown by category?"
+    with q_col3:
+        if st.button("🔄 Return Leakage", key="landing_qp_3", use_container_width=True):
+            quick_prompt = "Which products have the highest return rate?"
+    with q_col4:
+        if st.button("👥 Repeat Buyers", key="landing_qp_4", use_container_width=True):
+            quick_prompt = "How many customers are repeat buyers?"
+
+    landing_query_to_run = (landing_query if (landing_btn and landing_query) else None) or quick_prompt
+    if landing_query_to_run:
+        if "search_history" not in st.session_state:
+            st.session_state.search_history = []
+        if landing_query_to_run not in st.session_state.search_history:
+            st.session_state.search_history.append(landing_query_to_run)
+        st.session_state.active_search_prompt = landing_query_to_run
+        st.session_state.selected_nav = "🤖 Shoplytic Copilot"
+        st.session_state.jump_to_copilot = True
+        st.rerun()
+
+    # Front Page Themed Recent Search History (if searches exist)
+    if st.session_state.get("search_history"):
+        num_hist = len(st.session_state.search_history)
+        st.markdown(
+            f"""
+            <div class="search-history-wrapper">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem;">
+                    <div style="font-weight: 700; font-size: 0.92rem; color: {theme['text_color']};">
+                        🕒 Recent Search History <span class="search-badge">{num_hist} Saved</span>
+                    </div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        l_hist_cols = st.columns(3)
+        for h_idx, past_q in enumerate(reversed(st.session_state.search_history[-3:])):
+            col = l_hist_cols[h_idx % 3]
+            if col.button(f"🔍 {past_q[:35]}...", key=f"landing_hist_{h_idx}", use_container_width=True):
+                st.session_state.active_search_prompt = past_q
+                st.session_state.selected_nav = "🤖 Shoplytic Copilot"
+                st.session_state.jump_to_copilot = True
+                st.rerun()
 
     # 3. Live Store Data Statistics (E-Commerce Background & Scale)
     kpi_calc = KPICalculator(db)
