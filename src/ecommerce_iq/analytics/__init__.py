@@ -11,6 +11,7 @@ from ecommerce_iq.analytics.comparisons import PeriodComparisonEngine
 from ecommerce_iq.analytics.products import ProductAnalyticsEngine
 from ecommerce_iq.analytics.returns import ReturnsAnalyticsEngine
 from ecommerce_iq.analytics.customers import CustomerAnalyticsEngine
+from ecommerce_iq.analytics.reviews import ReviewAnalyticsEngine
 
 __all__ = [
     "BaseAnalyticsEngine",
@@ -19,5 +20,7 @@ __all__ = [
     "ProductAnalyticsEngine",
     "ReturnsAnalyticsEngine",
     "CustomerAnalyticsEngine",
+    "ReviewAnalyticsEngine",
 ]
+
 

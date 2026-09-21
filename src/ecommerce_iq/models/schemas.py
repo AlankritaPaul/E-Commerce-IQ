@@ -79,6 +79,77 @@ class ReviewSentimentSummary:
 
 
 @dataclass
+class RawReviewFeedback:
+    """Unaltered customer-submitted review feedback."""
+    review_id: int
+    product_id: int
+    product_title: str
+    customer_id: int
+    customer_display_name: str  # PII masked: "First L."
+    rating: int
+    title: Optional[str]
+    comment: str
+    review_date: str
+    verified_purchase: bool
+    helpful_votes: int = 0
+
+
+@dataclass
+class DerivedReviewInsight:
+    """System-derived analytical and sentiment intelligence."""
+    sentiment_label: str  # 'positive', 'neutral', 'negative'
+    sentiment_score: float  # -1.0 to 1.0
+    primary_topic: str  # 'Quality', 'Sizing/Fit', 'Battery/Hardware', etc.
+    detected_issue: Optional[str]  # e.g. "Battery failure / cuts out"
+    confidence: float  # 0.0 to 1.0
+    explanation: str  # Explainable justification with matched signals
+
+
+@dataclass
+class EnrichedReviewRecord:
+    """Two-tier container strictly separating raw customer input from derived intelligence."""
+    raw_feedback: RawReviewFeedback
+    derived_insight: DerivedReviewInsight
+
+
+@dataclass
+class RatingDistributionItem:
+    """Distribution metrics for a single star rating bracket."""
+    rating: int
+    review_count: int
+    percentage_of_total: float
+    average_sentiment_score: float
+    verified_percentage: float
+
+
+@dataclass
+class ThemeCluster:
+    """Identified recurring theme or defect issue cluster."""
+    theme_title: str
+    topic: str
+    review_count: int
+    percentage_of_reviews: float
+    severity_or_sentiment: str  # 'Critical', 'Warning', 'Praise', 'Positive'
+    affected_products: List[str] = field(default_factory=list)
+    sample_quotes: List[str] = field(default_factory=list)
+
+
+@dataclass
+class ProductReviewAnalysis:
+    """Comprehensive customer response and sentiment rollup for a single product."""
+    product_id: int
+    product_title: str
+    sku: str
+    average_rating: float
+    total_reviews: int
+    rating_distribution: List[RatingDistributionItem]
+    sentiment_summary: Dict[str, Any]
+    recurring_issues: List[ThemeCluster]
+    positive_themes: List[ThemeCluster]
+    recent_reviews: List[EnrichedReviewRecord]
+
+
+@dataclass
 class CustomerAggregateSummary:
     """High-level customer behavioral intelligence scorecard."""
     total_registered_customers: int
