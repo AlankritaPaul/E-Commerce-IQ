@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="docs/images/app_logo.png" width="120" alt="E-Commerce IQ Logo" style="border-radius: 12px; margin-bottom: 8px;" />
+
 # E-COMMERCE IQ
 
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=34&duration=2500&pause=1000&color=1E3A8A&center=true&vCenter=true&width=650&height=60&lines=E-COMMERCE+IQ;AI-Powered+Decision+Intelligence;Deterministic+SQL+%2B+AI+Copilot;Executive+Business+Analytics)](https://github.com/AlankritaPaul/E-Commerce-IQ)

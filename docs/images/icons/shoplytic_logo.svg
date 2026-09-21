@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" width="28" height="28" fill="none">
+  <rect width="28" height="28" rx="8" fill="url(#grad_shoplytic)"/>
+  <defs>
+    <linearGradient id="grad_shoplytic" x1="0" y1="0" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2563EB"/>
+      <stop offset="1" stop-color="#7C3AED"/>
+    </linearGradient>
+  </defs>
+  <!-- Shopping Bag outline -->
+  <path d="M7 10C7 9.4 7.4 9 8 9H20C20.6 9 21 9.4 21 10V20C21 21.1 20.1 22 19 22H9C7.9 22 7 21.1 7 20V10Z" stroke="white" stroke-width="1.6" fill="rgba(255,255,255,0.15)"/>
+  <path d="M11 9V7C11 5.3 12.3 4 14 4C15.7 4 17 5.3 17 7V9" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+  <!-- Analytics pulse inside bag -->
+  <path d="M10 16L12.5 13.5L15 17L18 12.5" stroke="#38BDF8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="18" cy="12.5" r="1.2" fill="#FDE047"/>
+</svg>

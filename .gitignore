@@ -27,6 +27,7 @@ venv.bak/
 data/*.db
 data/*.sqlite
 data/*.sqlite3
+!data/ecommerce_iq.db
 data/raw/*
 !data/raw/.gitkeep
 !data/.gitkeep
