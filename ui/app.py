@@ -209,14 +209,17 @@ def main() -> None:
     )
 
     nav_options = [
-        "📊 Executive Overview",
-        "📈 Sales & Revenue",
-        "🛍️ Product Performance",
-        "👥 Customer Behavior & RFM",
-        "💬 Customer Feedback & Sentiment",
-        "🔄 Returns & Refunds",
-        "🔍 Business Decline Diagnosis",
-        "🤖 AI Query Copilot"
+        "12. Professional Interface (Overview)",
+        "1. The Foundation of The Whole System",
+        "2. Realistic Business Dataset",
+        "3. Sales & Revenue Analytics",
+        "4. Product Performance",
+        "5. Customer Analysis",
+        "6. Customer Response",
+        "7. Returns & Refunds",
+        "8. Why did sales decrease?",
+        "9. Natural-language business questions",
+        "10. AI answer layer"
     ]
 
     selected_view = st.sidebar.radio("Navigation", nav_options, index=0)
@@ -225,36 +228,48 @@ def main() -> None:
     st.sidebar.caption("System Status: **Relational Database Connected**")
     st.sidebar.caption("Historical Data: **Jan 2025 – Feb 2026**")
 
-    # Route based on selection
-    if selected_view == "📊 Executive Overview":
+    # Route based on selection matching user-defined stage names
+    if selected_view == "12. Professional Interface (Overview)":
         render_overview_view(db, interpreter)
 
-    elif selected_view == "📈 Sales & Revenue":
+    elif selected_view == "1. The Foundation of The Whole System":
+        from ui.pages.foundation_view import render_foundation_page
+        render_foundation_page(db)
+
+    elif selected_view == "2. Realistic Business Dataset":
+        from ui.pages.dataset_view import render_dataset_page
+        render_dataset_page(db)
+
+    elif selected_view == "3. Sales & Revenue Analytics":
         from ui.pages.sales_view import render_sales_page
         render_sales_page(db, interpreter)
 
-    elif selected_view == "🛍️ Product Performance":
+    elif selected_view == "4. Product Performance":
         from ui.pages.products_view import render_products_page
         render_products_page(db, interpreter)
 
-    elif selected_view == "👥 Customer Behavior & RFM":
+    elif selected_view == "5. Customer Analysis":
         from ui.pages.customers_view import render_customers_page
         render_customers_page(db, interpreter)
 
-    elif selected_view == "💬 Customer Feedback & Sentiment":
+    elif selected_view == "6. Customer Response":
         from ui.pages.reviews_view import render_reviews_page
         render_reviews_page(db, interpreter)
 
-    elif selected_view == "🔄 Returns & Refunds":
+    elif selected_view == "7. Returns & Refunds":
         from ui.pages.returns_view import render_returns_page
         render_returns_page(db, interpreter)
 
-    elif selected_view == "🔍 Business Decline Diagnosis":
+    elif selected_view == "8. Why did sales decrease?":
         from ui.pages.diagnosis_view import render_diagnosis_page
         render_diagnosis_page(db, interpreter)
 
-    elif selected_view == "🤖 AI Query Copilot":
+    elif selected_view == "9. Natural-language business questions":
         render_copilot_chat(query_engine)
+
+    elif selected_view == "10. AI answer layer":
+        from ui.pages.interpretation_view import render_interpretation_page
+        render_interpretation_page(db, interpreter)
 
 
 if __name__ == "__main__":

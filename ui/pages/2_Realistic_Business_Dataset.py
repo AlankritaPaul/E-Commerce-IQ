@@ -1,5 +1,5 @@
 """
-Streamlit Multi-Page: Returns, Refunds & Quality Leakage.
+Streamlit Multi-Page: 2. Realistic Business Dataset.
 """
 
 import sys
@@ -12,14 +12,12 @@ if str(root_dir) not in sys.path:
     sys.path.insert(0, str(root_dir))
 
 from ecommerce_iq.database.connection import DatabaseManager
-from ecommerce_iq.ai.interpretation import AnalyticsInterpreter
-from ui.pages.returns_view import render_returns_page
+from ui.pages.dataset_view import render_dataset_page
 
 
 def main() -> None:
     db = DatabaseManager()
-    interpreter = AnalyticsInterpreter()
-    render_returns_page(db, interpreter)
+    render_dataset_page(db)
 
 
 if __name__ == "__main__":

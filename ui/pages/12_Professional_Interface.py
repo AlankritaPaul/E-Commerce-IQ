@@ -1,5 +1,5 @@
 """
-Streamlit Multi-Page: Customer Feedback & Review Sentiment.
+Streamlit Multi-Page: 12. Professional Interface.
 """
 
 import sys
@@ -13,13 +13,13 @@ if str(root_dir) not in sys.path:
 
 from ecommerce_iq.database.connection import DatabaseManager
 from ecommerce_iq.ai.interpretation import AnalyticsInterpreter
-from ui.pages.reviews_view import render_reviews_page
+from ui.app import render_overview_view
 
 
 def main() -> None:
     db = DatabaseManager()
     interpreter = AnalyticsInterpreter()
-    render_reviews_page(db, interpreter)
+    render_overview_view(db, interpreter)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,5 @@
 """
-Streamlit Multi-Page: Business Performance Decline Diagnosis.
+Streamlit Multi-Page: 7. Returns & Refunds.
 """
 
 import sys
@@ -13,13 +13,13 @@ if str(root_dir) not in sys.path:
 
 from ecommerce_iq.database.connection import DatabaseManager
 from ecommerce_iq.ai.interpretation import AnalyticsInterpreter
-from ui.pages.diagnosis_view import render_diagnosis_page
+from ui.pages.returns_view import render_returns_page
 
 
 def main() -> None:
     db = DatabaseManager()
     interpreter = AnalyticsInterpreter()
-    render_diagnosis_page(db, interpreter)
+    render_returns_page(db, interpreter)
 
 
 if __name__ == "__main__":

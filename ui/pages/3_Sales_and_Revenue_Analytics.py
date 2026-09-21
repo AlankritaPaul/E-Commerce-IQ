@@ -1,5 +1,5 @@
 """
-Streamlit Multi-Page: Natural-Language AI Query Copilot.
+Streamlit Multi-Page: 3. Sales & Revenue Analytics.
 """
 
 import sys
@@ -12,12 +12,14 @@ if str(root_dir) not in sys.path:
     sys.path.insert(0, str(root_dir))
 
 from ecommerce_iq.database.connection import DatabaseManager
-from ui.pages.copilot_view import render_copilot_page
+from ecommerce_iq.ai.interpretation import AnalyticsInterpreter
+from ui.pages.sales_view import render_sales_page
 
 
 def main() -> None:
     db = DatabaseManager()
-    render_copilot_page(db)
+    interpreter = AnalyticsInterpreter()
+    render_sales_page(db, interpreter)
 
 
 if __name__ == "__main__":

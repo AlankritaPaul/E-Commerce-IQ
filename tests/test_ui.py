@@ -201,10 +201,20 @@ class TestUIPages(unittest.TestCase):
         from ui.pages.diagnosis_view import render_diagnosis_page
         render_diagnosis_page(self.db, self.interpreter)
 
-    def test_copilot_view_execution(self):
-        """Verify copilot_view renders without exceptions."""
-        from ui.pages.copilot_view import render_copilot_page
-        render_copilot_page(self.db)
+    def test_foundation_view_execution(self):
+        """Verify foundation_view renders without exceptions."""
+        from ui.pages.foundation_view import render_foundation_page
+        render_foundation_page(self.db)
+
+    def test_dataset_view_execution(self):
+        """Verify dataset_view renders without exceptions."""
+        from ui.pages.dataset_view import render_dataset_page
+        render_dataset_page(self.db)
+
+    def test_interpretation_view_execution(self):
+        """Verify interpretation_view renders without exceptions."""
+        from ui.pages.interpretation_view import render_interpretation_page
+        render_interpretation_page(self.db, self.interpreter)
 
 
 if __name__ == "__main__":

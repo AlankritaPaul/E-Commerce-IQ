@@ -1,5 +1,5 @@
 """
-Streamlit Multi-Page: Product Performance & Unit Economics.
+Streamlit Multi-Page: 5. Customer Analysis.
 """
 
 import sys
@@ -13,13 +13,13 @@ if str(root_dir) not in sys.path:
 
 from ecommerce_iq.database.connection import DatabaseManager
 from ecommerce_iq.ai.interpretation import AnalyticsInterpreter
-from ui.pages.products_view import render_products_page
+from ui.pages.customers_view import render_customers_page
 
 
 def main() -> None:
     db = DatabaseManager()
     interpreter = AnalyticsInterpreter()
-    render_products_page(db, interpreter)
+    render_customers_page(db, interpreter)
 
 
 if __name__ == "__main__":
