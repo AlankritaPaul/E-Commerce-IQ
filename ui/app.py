@@ -209,7 +209,7 @@ def main() -> None:
     )
 
     nav_options = [
-        "12. Professional Interface (Overview)",
+        "11. Professional Interface (Overview)",
         "1. The Foundation of The Whole System",
         "2. Realistic Business Dataset",
         "3. Sales & Revenue Analytics",
@@ -229,7 +229,7 @@ def main() -> None:
     st.sidebar.caption("Historical Data: **Jan 2025 – Feb 2026**")
 
     # Route based on selection matching user-defined stage names
-    if selected_view == "12. Professional Interface (Overview)":
+    if selected_view == "11. Professional Interface (Overview)":
         render_overview_view(db, interpreter)
 
     elif selected_view == "1. The Foundation of The Whole System":

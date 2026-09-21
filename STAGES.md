@@ -18,7 +18,7 @@ This document maps all 11 project stages—using the **exact titles and serial n
 | **8. Why did sales decrease?** | `src/ecommerce_iq/business_logic/diagnosis.py` | `ui/pages/8_Why_Did_Sales_Decrease.py`<br>`ui/pages/diagnosis_view.py` | `tests/test_diagnosis.py` | ✅ Verified & Tested |
 | **9. Natural-language business questions:** | `src/ecommerce_iq/ai/query_engine.py`<br>`src/ecommerce_iq/ai/text_to_sql.py`<br>`src/ecommerce_iq/ai/sql_guardrails.py`<br>`src/ecommerce_iq/ai/advisor.py` | `ui/pages/9_Natural_Language_Business_Questions.py`<br>`ui/pages/copilot_view.py` | `tests/test_ai.py` | ✅ Verified & Tested |
 | **10. AI answer layer:** | `src/ecommerce_iq/ai/interpretation.py`<br>(`AnalyticsInterpreter`, `NumericalGroundingVerifier`) | `ui/pages/10_AI_Answer_Layer.py`<br>`ui/pages/interpretation_view.py` | `tests/test_interpretation.py` | ✅ Verified & Tested |
-| **12. Professional Interface** | `ui/app.py`<br>`ui/components/cards.py`<br>`ui/components/charts.py`<br>`ui/components/chat.py` | `ui/pages/12_Professional_Interface.py`<br>`ui/app.py` | `tests/test_ui.py` | ✅ Verified & Tested |
+| **11. Professional Interface** | `ui/app.py`<br>`ui/components/cards.py`<br>`ui/components/charts.py`<br>`ui/components/chat.py` | `ui/pages/11_Professional_Interface.py`<br>`ui/app.py` | `tests/test_ui.py` | ✅ Verified & Tested |
 
 ---
 
@@ -84,7 +84,7 @@ This document maps all 11 project stages—using the **exact titles and serial n
 - **Implemented In**:
   - `src/ecommerce_iq/ai/interpretation.py` (`AnalyticsInterpreter`, `NumericalGroundingVerifier`)
 
-### 12. Professional Interface
+### 11. Professional Interface
 - **Purpose**: Clean, corporate-grade Streamlit decision intelligence application with multi-page drilldowns, interactive Plotly visualizations, metric cards, and natural-language AI copilot.
 - **Implemented In**:
   - `ui/app.py` (Application routing & Executive Overview)
