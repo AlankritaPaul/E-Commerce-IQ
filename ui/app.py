@@ -43,6 +43,8 @@ from ui.components.charts import (
 from ui.components.chat import render_copilot_chat
 from ui.views.landing_view import render_landing_page
 from ui.views.terms_view import render_terms_page
+from ui.views.connect_view import render_connect_page
+from ui.views.guide_view import render_guide_page
 
 
 def ensure_database_ready(db: DatabaseManager) -> None:
@@ -179,6 +181,8 @@ def main() -> None:
         "🏠 Home",
         "📊 Executive Dashboard",
         "🤖 Shoplytic Copilot",
+        "🔌 Connect Store / Data",
+        "📖 How to Use",
         "🛍️ Product Economics",
         "👥 Customer RFM",
         "🔄 Returns & Leakage",
@@ -277,6 +281,12 @@ def main() -> None:
 
     elif selected_view == "🤖 Shoplytic Copilot":
         render_copilot_chat(query_engine)
+
+    elif selected_view == "🔌 Connect Store / Data":
+        render_connect_page(db)
+
+    elif selected_view == "📖 How to Use":
+        render_guide_page()
 
     elif selected_view == "🛍️ Product Economics":
         from ui.views.products_view import render_products_page
