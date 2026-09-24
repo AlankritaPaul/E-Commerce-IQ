@@ -274,24 +274,6 @@ E-Commerce-IQ/
 
 ---
 
-## <img src="docs/images/icons/roadmap.svg" width="22" height="22" valign="middle" /> Development Stages & Roadmap
-
-| Stage # | Exact Stage Milestone | Scope & Deliverables | Status |
-| :---: | :--- | :--- | :---: |
-| **Stage 1** | **The Foundation of The Whole System** | Normalized SQL schema, 8 core entities, SQLAlchemy ORM, and connection lifecycle management. | **Completed & Tested** ✅ |
-| **Stage 2** | **Realistic Business Dataset** | 14-month synthetic transactional dataset (Jan 2025 – Feb 2026), 4,061 orders, and realistic anomalies. | **Completed & Tested** ✅ |
-| **Stage 3** | **Sales & Revenue Analytics** | Deterministic calculations for GMV, Net Revenue, completed orders, AOV, and MoM/WoW variance. | **Completed & Tested** ✅ |
-| **Stage 4** | **Product Performance** | SKU unit economics, profit margins, bestseller rankings, dead-stock alerts, and 0–100 Health Scores. | **Completed & Tested** ✅ |
-| **Stage 5** | **Customer Analysis** | LTV calculations, 96.75% repeat purchase rate, RFM quintile segmentation, and churn cohorts with PII masking. | **Completed & Tested** ✅ |
-| **Stage 6** | **Customer Response** | CSAT rating distributions, explainable sentiment polarity, defect topic clustering, and verbatim quotes. | **Completed & Tested** ✅ |
-| **Stage 7** | **Returns & Refunds** | Return rate benchmarking (4.76%), refund dollar leakage ($41.1K), return reasons, and review triangulation. | **Completed & Tested** ✅ |
-| **Stage 8** | **Why did sales decrease?** | Empirical business diagnosis module evaluating the -61.03% August 2025 collapse across 8 evidence metrics. | **Completed & Tested** ✅ |
-| **Stage 9** | **Natural-language business questions:** | Schema-grounded natural-language query engine with strict AST read-only guardrails and SQL injection blocking. | **Completed & Tested** ✅ |
-| **Stage 10** | **AI answer layer:** | Executive interpretation layer translating analytical outputs into business narratives with numerical anti-hallucination audits. | **Completed & Tested** ✅ |
-| **Stage 11** | **Professional Interface** | Corporate-grade Streamlit multi-page BI platform with interactive Plotly visualizations and AI copilot. | **Completed & Tested** ✅ |
-
----
-
 ## <img src="docs/images/icons/getting_started.svg" width="22" height="22" valign="middle" /> Getting Started
 
 ### <img src="docs/images/icons/prerequisites.svg" width="18" height="18" valign="middle" /> 1. Prerequisites
