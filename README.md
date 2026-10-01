@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/images/app_logo.png" width="120" alt="E-Commerce IQ Logo" style="border-radius: 12px; margin-bottom: 8px;" />
+<img src="docs/images/app_logo.png" width="160" alt="E-Commerce IQ Logo" style="margin-bottom: 12px;" />
 
 # E-COMMERCE IQ
 
