@@ -11,7 +11,9 @@ Features:
 """
 
 from pathlib import Path
+import textwrap
 import streamlit as st
+import streamlit.components.v1 as components
 
 from ecommerce_iq.database.connection import DatabaseManager
 from ecommerce_iq.analytics.kpis import KPICalculator
@@ -19,9 +21,330 @@ from ui.components.charts import render_revenue_trend_chart
 from ui.theme import get_current_theme
 
 
+def render_landing_animated_background(theme: dict) -> None:
+    """
+    Renders an executive, business & mathematical animated background
+    (Quantitative Financial Mesh & Candlestick Vectors) with HTML5 video streaming
+    and a frosted-glass overlay for both Dark and White themes.
+    """
+    theme_id = theme.get("id", "corporate")
+    is_dark = (theme_id == "dark")
+
+    # Define theme-specific quantitative styling parameters
+    if is_dark:
+        bg_base = "#0B0F19"
+        overlay_bg = "radial-gradient(circle at 50% 25%, rgba(11, 15, 25, 0.68) 0%, rgba(3, 7, 18, 0.84) 100%)"
+        mesh_primary = "rgba(6, 182, 212, 0.28)"
+        mesh_secondary = "rgba(37, 99, 235, 0.22)"
+        candle_bull = "rgba(16, 185, 129, 0.80)"
+        candle_wick = "rgba(52, 211, 153, 0.85)"
+        trend_line = "rgba(34, 211, 238, 0.85)"
+        particle_color = "rgba(147, 197, 253, 0.35)"
+    else:  # corporate or luxury white theme
+        bg_base = "#F8FAFC"
+        overlay_bg = "radial-gradient(circle at 50% 25%, rgba(248, 250, 252, 0.72) 0%, rgba(241, 245, 249, 0.85) 100%)"
+        mesh_primary = "rgba(30, 58, 138, 0.16)"
+        mesh_secondary = "rgba(37, 99, 235, 0.14)"
+        candle_bull = "rgba(5, 150, 105, 0.50)"
+        candle_wick = "rgba(16, 185, 129, 0.60)"
+        trend_line = "rgba(30, 58, 138, 0.65)"
+        particle_color = "rgba(30, 58, 138, 0.25)"
+
+    # Step 1: Inject HTML elements (background container, video player, canvas, frosted glass)
+    bg_html = textwrap.dedent(f"""
+        <div id="landing-bg-container" style="
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+            background: {bg_base};
+        ">
+            <video id="landing-bg-video" autoplay loop muted playsinline style="
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                opacity: 0.35;
+                pointer-events: none;
+            "></video>
+            <canvas id="landing-bg-canvas" style="
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+            "></canvas>
+            <div id="landing-bg-overlay" style="
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: {overlay_bg};
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                pointer-events: none;
+            "></div>
+        </div>
+        <style>
+            /* Elevate landing content cleanly above animated background */
+            [data-testid="stAppViewContainer"] > .main {{
+                position: relative !important;
+                z-index: 1 !important;
+            }}
+            .block-container {{
+                position: relative !important;
+                z-index: 1 !important;
+            }}
+        </style>
+    """)
+    st.markdown(bg_html, unsafe_allow_html=True)
+
+    # Step 2: Execute JS via components.html to run the 60fps Quantitative Financial Mesh & Candlesticks
+    js_code = f"""
+    <script>
+    (function run() {{
+        const doc = window.parent.document;
+        const win = window.parent;
+        const canvas = doc.getElementById('landing-bg-canvas');
+        const video = doc.getElementById('landing-bg-video');
+
+        if (!canvas) {{
+            setTimeout(run, 50);
+            return;
+        }}
+
+        // Cancel previous animation loop if already running on parent
+        if (win._ecBgAnimId) {{
+            win.cancelAnimationFrame(win._ecBgAnimId);
+            win._ecBgAnimId = null;
+        }}
+
+        const ctx = canvas.getContext('2d');
+        let width = win.innerWidth;
+        let height = win.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+
+        function onResize() {{
+            width = win.innerWidth;
+            height = win.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }}
+        if (win._ecBgResizeHandler) {{
+            win.removeEventListener('resize', win._ecBgResizeHandler);
+        }}
+        win._ecBgResizeHandler = onResize;
+        win.addEventListener('resize', onResize);
+
+        // Link live canvas stream to HTML5 video element for embedded video playback
+        if (video && canvas.captureStream) {{
+            try {{
+                if (!video.srcObject) {{
+                    const stream = canvas.captureStream(30);
+                    video.srcObject = stream;
+                    video.play().catch(function() {{}});
+                }}
+            }} catch(e) {{}}
+        }}
+
+        // Theme configuration
+        const isDark = {str(is_dark).lower()};
+        const meshPrimary = "{mesh_primary}";
+        const meshSecondary = "{mesh_secondary}";
+        const candleBull = "{candle_bull}";
+        const candleWick = "{candle_wick}";
+        const trendLineColor = "{trend_line}";
+        const particleColor = "{particle_color}";
+
+        // Candlestick simulation data (financial time-series)
+        const numCandles = 24;
+        const candles = [];
+        let basePrice = 120;
+        for (let i = 0; i < numCandles; i++) {{
+            const delta = (Math.sin(i * 0.45) * 12) + (Math.random() * 8 - 3);
+            const open = basePrice + delta;
+            const close = open + (Math.random() > 0.35 ? 1 : -1) * (Math.random() * 9 + 2);
+            const high = Math.max(open, close) + Math.random() * 6 + 1;
+            const low = Math.min(open, close) - Math.random() * 6 - 1;
+            candles.push({{
+                open: open,
+                close: close,
+                high: high,
+                low: low,
+                phase: Math.random() * Math.PI * 2
+            }});
+            basePrice = close;
+        }}
+
+        // Floating mathematical tokens
+        const mathTokens = [
+            {{ text: 'f(x) = Σwᵢxᵢ', x: 0.15, y: 0.22, vx: 0.0001, vy: -0.00005 }},
+            {{ text: 'ΔRev / Δt > 0', x: 0.82, y: 0.18, vx: -0.00008, vy: 0.00006 }},
+            {{ text: 'σ = 0.042', x: 0.08, y: 0.65, vx: 0.00012, vy: -0.00004 }},
+            {{ text: 'R² = 0.984', x: 0.88, y: 0.72, vx: -0.00009, vy: -0.00007 }},
+            {{ text: '+18.4% YoY', x: 0.52, y: 0.12, vx: 0.00005, vy: 0.00008 }}
+        ];
+
+        let tick = 0;
+
+        function draw() {{
+            tick += 0.018;
+            ctx.clearRect(0, 0, width, height);
+
+            // 1. Draw 3D Perspective Quantitative Mesh Waves
+            const cols = 28;
+            const rows = 14;
+            const horizonY = height * 0.42;
+            const bottomY = height * 1.05;
+            const gridPoints = [];
+
+            for (let r = 0; r <= rows; r++) {{
+                const rowRatio = r / rows;
+                const pFactor = Math.pow(rowRatio, 1.6);
+                const py = horizonY + (bottomY - horizonY) * pFactor;
+                const spread = width * (0.35 + 0.85 * pFactor);
+                const startX = (width - spread) / 2;
+
+                gridPoints[r] = [];
+                for (let c = 0; c <= cols; c++) {{
+                    const px = startX + spread * (c / cols);
+
+                    // Harmonic trigonometric surface wave
+                    const wave1 = Math.sin(c * 0.45 + tick * 1.2) * (14 * pFactor);
+                    const wave2 = Math.cos(r * 0.55 + tick * 0.9 + c * 0.2) * (10 * pFactor);
+                    const wave3 = Math.sin((c + r) * 0.3 - tick * 1.5) * (6 * pFactor);
+                    const yOffset = wave1 + wave2 + wave3;
+
+                    gridPoints[r][c] = {{ x: px, y: py + yOffset }};
+                }}
+            }}
+
+            // Draw Mesh Lateral Curves
+            for (let r = 0; r <= rows; r++) {{
+                ctx.beginPath();
+                ctx.strokeStyle = (r % 2 === 0) ? meshPrimary : meshSecondary;
+                ctx.lineWidth = 1 + (r / rows) * 1.2;
+                for (let c = 0; c <= cols; c++) {{
+                    const pt = gridPoints[r][c];
+                    if (c === 0) ctx.moveTo(pt.x, pt.y);
+                    else ctx.lineTo(pt.x, pt.y);
+                }}
+                ctx.stroke();
+            }}
+
+            // Draw Mesh Longitudinal Perspective Rays
+            for (let c = 0; c <= cols; c += 2) {{
+                ctx.beginPath();
+                ctx.strokeStyle = meshSecondary;
+                ctx.lineWidth = 1;
+                for (let r = 0; r <= rows; r++) {{
+                    const pt = gridPoints[r][c];
+                    if (r === 0) ctx.moveTo(pt.x, pt.y);
+                    else ctx.lineTo(pt.x, pt.y);
+                }}
+                ctx.stroke();
+            }}
+
+            // 2. Draw Floating Candlestick Vectors & Financial Trendline
+            const candleAreaWidth = width * 0.88;
+            const candleStartX = (width - candleAreaWidth) / 2;
+            const candleSpacing = candleAreaWidth / numCandles;
+            const candleBaseY = height * 0.62;
+            const trendPoints = [];
+
+            for (let i = 0; i < numCandles; i++) {{
+                const cd = candles[i];
+                const osc = Math.sin(tick * 1.5 + cd.phase) * 3;
+                const cx = candleStartX + i * candleSpacing + candleSpacing * 0.5;
+
+                const openY = candleBaseY - (cd.open + osc) * 1.2;
+                const closeY = candleBaseY - (cd.close + osc) * 1.2;
+                const highY = candleBaseY - (cd.high + osc) * 1.2;
+                const lowY = candleBaseY - (cd.low + osc) * 1.2;
+
+                const isBull = cd.close >= cd.open;
+                const bodyTop = Math.min(openY, closeY);
+                const bodyHeight = Math.max(Math.abs(closeY - openY), 4);
+                const candleWidth = Math.max(candleSpacing * 0.42, 6);
+
+                // Draw Wick Line
+                ctx.beginPath();
+                ctx.strokeStyle = isBull ? candleWick : (isDark ? "rgba(239, 68, 68, 0.65)" : "rgba(220, 38, 38, 0.45)");
+                ctx.lineWidth = 1.4;
+                ctx.moveTo(cx, highY);
+                ctx.lineTo(cx, lowY);
+                ctx.stroke();
+
+                // Draw Candlestick Body
+                ctx.fillStyle = isBull ? candleBull : (isDark ? "rgba(239, 68, 68, 0.6)" : "rgba(220, 38, 38, 0.4)");
+                ctx.fillRect(cx - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
+
+                // Add slight border
+                ctx.strokeStyle = isBull ? candleWick : (isDark ? "rgba(248, 113, 113, 0.8)" : "rgba(185, 28, 28, 0.5)");
+                ctx.lineWidth = 1;
+                ctx.strokeRect(cx - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
+
+                trendPoints.push({{ x: cx, y: (openY + closeY) / 2 }});
+            }}
+
+            // Draw Ascending Financial Trendline (Spline through candles)
+            if (trendPoints.length > 1) {{
+                ctx.beginPath();
+                ctx.strokeStyle = trendLineColor;
+                ctx.lineWidth = 2.2;
+                ctx.moveTo(trendPoints[0].x, trendPoints[0].y);
+                for (let i = 1; i < trendPoints.length; i++) {{
+                    const prev = trendPoints[i - 1];
+                    const curr = trendPoints[i];
+                    const mx = (prev.x + curr.x) / 2;
+                    const my = (prev.y + curr.y) / 2;
+                    ctx.quadraticCurveTo(prev.x, prev.y, mx, my);
+                }}
+                ctx.stroke();
+
+                // Draw glowing pulse along trendline head
+                const last = trendPoints[trendPoints.length - 1];
+                ctx.beginPath();
+                ctx.arc(last.x, last.y, 4, 0, Math.PI * 2);
+                ctx.fillStyle = trendLineColor;
+                ctx.fill();
+            }}
+
+            // 3. Draw Ambient Mathematical Coordinates & Floating Tokens
+            ctx.font = '600 12px "Inter", monospace, sans-serif';
+            ctx.fillStyle = particleColor;
+            for (let k = 0; k < mathTokens.length; k++) {{
+                const tk = mathTokens[k];
+                tk.x += tk.vx;
+                tk.y += tk.vy;
+                if (tk.x < 0.02 || tk.x > 0.95) tk.vx = -tk.vx;
+                if (tk.y < 0.08 || tk.y > 0.85) tk.vy = -tk.vy;
+                ctx.fillText(tk.text, tk.x * width, tk.y * height);
+            }}
+
+            win._ecBgAnimId = win.requestAnimationFrame(draw);
+        }}
+
+        win._ecBgAnimId = win.requestAnimationFrame(draw);
+    }})();
+    </script>
+    """
+    components.html(js_code, height=0, scrolling=False)
+
+
 def render_landing_page(db: DatabaseManager) -> None:
     """Render the official front landing page."""
     theme = get_current_theme()
+    render_landing_animated_background(theme)
     logo_path = Path(__file__).resolve().parent.parent / "app_logo.png"
 
     # 1. Hero Brand Header
