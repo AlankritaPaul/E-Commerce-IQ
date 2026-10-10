@@ -23,34 +23,44 @@ from ui.theme import get_current_theme
 
 def render_landing_animated_background(theme: dict) -> None:
     """
-    Renders an executive, business & mathematical animated background
+    Renders an executive, high-visibility business & mathematical animated background
     (Quantitative Financial Mesh & Candlestick Vectors) with HTML5 video streaming
-    and a frosted-glass overlay for both Dark and White themes.
+    and an elegant transparent vignette for both Dark and White themes.
     """
     theme_id = theme.get("id", "corporate")
     is_dark = (theme_id == "dark")
 
-    # Define theme-specific quantitative styling parameters
+    # Define high-contrast, vivid theme-specific styling parameters
     if is_dark:
-        bg_base = "#0B0F19"
-        overlay_bg = "radial-gradient(circle at 50% 25%, rgba(11, 15, 25, 0.68) 0%, rgba(3, 7, 18, 0.84) 100%)"
-        mesh_primary = "rgba(6, 182, 212, 0.28)"
-        mesh_secondary = "rgba(37, 99, 235, 0.22)"
-        candle_bull = "rgba(16, 185, 129, 0.80)"
-        candle_wick = "rgba(52, 211, 153, 0.85)"
-        trend_line = "rgba(34, 211, 238, 0.85)"
-        particle_color = "rgba(147, 197, 253, 0.35)"
+        bg_base = "#070B14"
+        vignette_bg = "radial-gradient(circle at 50% 35%, rgba(7, 11, 20, 0.10) 0%, rgba(3, 7, 18, 0.45) 100%)"
+        mesh_primary = "rgba(6, 182, 212, 0.70)"       # Vibrant electric cyan
+        mesh_secondary = "rgba(59, 130, 246, 0.50)"     # Luminous sapphire blue
+        mesh_node = "rgba(34, 211, 238, 0.95)"          # Bright cyan node pulse
+        candle_bull = "rgba(16, 185, 129, 0.95)"        # Neon emerald green
+        candle_wick = "rgba(52, 211, 153, 1.0)"
+        candle_bear = "rgba(244, 63, 94, 0.90)"         # Neon rose red
+        candle_bear_wick = "rgba(251, 113, 133, 1.0)"
+        trend_line = "rgba(34, 211, 238, 0.95)"         # Glowing laser cyan
+        badge_bg = "rgba(19, 27, 46, 0.88)"
+        badge_border = "rgba(6, 182, 212, 0.55)"
+        badge_text = "#38BDF8"
     else:  # corporate or luxury white theme
-        bg_base = "#F8FAFC"
-        overlay_bg = "radial-gradient(circle at 50% 25%, rgba(248, 250, 252, 0.72) 0%, rgba(241, 245, 249, 0.85) 100%)"
-        mesh_primary = "rgba(30, 58, 138, 0.16)"
-        mesh_secondary = "rgba(37, 99, 235, 0.14)"
-        candle_bull = "rgba(5, 150, 105, 0.50)"
-        candle_wick = "rgba(16, 185, 129, 0.60)"
-        trend_line = "rgba(30, 58, 138, 0.65)"
-        particle_color = "rgba(30, 58, 138, 0.25)"
+        bg_base = "#EEF2F6"
+        vignette_bg = "radial-gradient(circle at 50% 35%, rgba(248, 250, 252, 0.05) 0%, rgba(226, 232, 240, 0.35) 100%)"
+        mesh_primary = "rgba(37, 99, 235, 0.60)"       # Vivid royal sapphire blue
+        mesh_secondary = "rgba(30, 58, 138, 0.45)"     # Deep corporate navy
+        mesh_node = "rgba(29, 78, 216, 0.90)"          # Crisp royal blue node
+        candle_bull = "rgba(5, 150, 105, 0.92)"        # Rich solid emerald green
+        candle_wick = "rgba(4, 120, 87, 1.0)"
+        candle_bear = "rgba(220, 38, 38, 0.88)"        # Bold corporate red
+        candle_bear_wick = "rgba(185, 28, 28, 1.0)"
+        trend_line = "rgba(29, 78, 216, 0.95)"         # Bold royal cobalt blue
+        badge_bg = "rgba(255, 255, 255, 0.92)"
+        badge_border = "rgba(147, 197, 253, 0.85)"
+        badge_text = "#1E3A8A"
 
-    # Step 1: Inject HTML elements (background container, video player, canvas, frosted glass)
+    # Step 1: Inject HTML elements (background container, video player, canvas, vignette)
     bg_html = textwrap.dedent(f"""
         <div id="landing-bg-container" style="
             position: fixed;
@@ -70,7 +80,7 @@ def render_landing_animated_background(theme: dict) -> None:
                 width: 100%;
                 height: 100%;
                 object-fit: cover;
-                opacity: 0.35;
+                opacity: 0.45;
                 pointer-events: none;
             "></video>
             <canvas id="landing-bg-canvas" style="
@@ -87,17 +97,17 @@ def render_landing_animated_background(theme: dict) -> None:
                 left: 0;
                 width: 100%;
                 height: 100%;
-                background: {overlay_bg};
-                backdrop-filter: blur(8px);
-                -webkit-backdrop-filter: blur(8px);
+                background: {vignette_bg};
                 pointer-events: none;
             "></div>
         </div>
         <style>
-            /* Elevate landing content cleanly above animated background */
-            [data-testid="stAppViewContainer"] > .main {{
-                position: relative !important;
-                z-index: 1 !important;
+            /* Ensure Streamlit containers remain transparent on front page so background is vividly visible */
+            [data-testid="stAppViewContainer"] {{
+                background: transparent !important;
+            }}
+            [data-testid="stMain"] {{
+                background: transparent !important;
             }}
             .block-container {{
                 position: relative !important;
@@ -160,56 +170,65 @@ def render_landing_animated_background(theme: dict) -> None:
         const isDark = {str(is_dark).lower()};
         const meshPrimary = "{mesh_primary}";
         const meshSecondary = "{mesh_secondary}";
+        const meshNodeColor = "{mesh_node}";
         const candleBull = "{candle_bull}";
         const candleWick = "{candle_wick}";
+        const candleBear = "{candle_bear}";
+        const candleBearWick = "{candle_bear_wick}";
         const trendLineColor = "{trend_line}";
-        const particleColor = "{particle_color}";
+        const badgeBg = "{badge_bg}";
+        const badgeBorder = "{badge_border}";
+        const badgeText = "{badge_text}";
 
         // Candlestick simulation data (financial time-series)
-        const numCandles = 24;
+        const numCandles = 22;
         const candles = [];
-        let basePrice = 120;
+        let basePrice = 135;
         for (let i = 0; i < numCandles; i++) {{
-            const delta = (Math.sin(i * 0.45) * 12) + (Math.random() * 8 - 3);
+            const delta = (Math.sin(i * 0.45) * 16) + (Math.random() * 10 - 4);
             const open = basePrice + delta;
-            const close = open + (Math.random() > 0.35 ? 1 : -1) * (Math.random() * 9 + 2);
-            const high = Math.max(open, close) + Math.random() * 6 + 1;
-            const low = Math.min(open, close) - Math.random() * 6 - 1;
+            const isBull = (i % 3 !== 2);
+            const move = (Math.random() * 12 + 4) * (isBull ? 1 : -1);
+            const close = open + move;
+            const high = Math.max(open, close) + (Math.random() * 8 + 3);
+            const low = Math.min(open, close) - (Math.random() * 8 + 3);
+            const volume = Math.random() * 35 + 15;
             candles.push({{
                 open: open,
                 close: close,
                 high: high,
                 low: low,
+                volume: volume,
                 phase: Math.random() * Math.PI * 2
             }});
             basePrice = close;
         }}
 
-        // Floating mathematical tokens
+        // Floating mathematical tokens with pill bounding box
         const mathTokens = [
-            {{ text: 'f(x) = Σwᵢxᵢ', x: 0.15, y: 0.22, vx: 0.0001, vy: -0.00005 }},
-            {{ text: 'ΔRev / Δt > 0', x: 0.82, y: 0.18, vx: -0.00008, vy: 0.00006 }},
-            {{ text: 'σ = 0.042', x: 0.08, y: 0.65, vx: 0.00012, vy: -0.00004 }},
-            {{ text: 'R² = 0.984', x: 0.88, y: 0.72, vx: -0.00009, vy: -0.00007 }},
-            {{ text: '+18.4% YoY', x: 0.52, y: 0.12, vx: 0.00005, vy: 0.00008 }}
+            {{ text: '📐 f(x) = ∫ E(t) dt', x: 0.12, y: 0.20, vx: 0.00012, vy: -0.00006 }},
+            {{ text: '📈 GMV Trajectory: +18.4%', x: 0.78, y: 0.16, vx: -0.00010, vy: 0.00008 }},
+            {{ text: '📊 Sharpe: 2.41 | σ: 0.04', x: 0.07, y: 0.62, vx: 0.00014, vy: -0.00005 }},
+            {{ text: '⚡ R² = 0.984 (SQL Engine)', x: 0.82, y: 0.70, vx: -0.00011, vy: -0.00008 }},
+            {{ text: '⚖️ Arbitrage Delta: Δ0.12', x: 0.48, y: 0.10, vx: 0.00007, vy: 0.00009 }}
         ];
 
         let tick = 0;
 
         function draw() {{
-            tick += 0.018;
+            tick += 0.020;
             ctx.clearRect(0, 0, width, height);
 
             // 1. Draw 3D Perspective Quantitative Mesh Waves
-            const cols = 28;
-            const rows = 14;
-            const horizonY = height * 0.42;
+            const cols = 26;
+            const rows = 12;
+            const horizonY = height * 0.40;
             const bottomY = height * 1.05;
             const gridPoints = [];
 
             for (let r = 0; r <= rows; r++) {{
                 const rowRatio = r / rows;
-                const pFactor = Math.pow(rowRatio, 1.6);
+                const pFactor = Math.pow(rowRatio, 1.55);
                 const py = horizonY + (bottomY - horizonY) * pFactor;
                 const spread = width * (0.35 + 0.85 * pFactor);
                 const startX = (width - spread) / 2;
@@ -218,21 +237,21 @@ def render_landing_animated_background(theme: dict) -> None:
                 for (let c = 0; c <= cols; c++) {{
                     const px = startX + spread * (c / cols);
 
-                    // Harmonic trigonometric surface wave
-                    const wave1 = Math.sin(c * 0.45 + tick * 1.2) * (14 * pFactor);
-                    const wave2 = Math.cos(r * 0.55 + tick * 0.9 + c * 0.2) * (10 * pFactor);
-                    const wave3 = Math.sin((c + r) * 0.3 - tick * 1.5) * (6 * pFactor);
+                    // Dynamic multi-frequency surface wave
+                    const wave1 = Math.sin(c * 0.42 + tick * 1.25) * (16 * pFactor);
+                    const wave2 = Math.cos(r * 0.50 + tick * 0.95 + c * 0.22) * (12 * pFactor);
+                    const wave3 = Math.sin((c + r) * 0.28 - tick * 1.4) * (7 * pFactor);
                     const yOffset = wave1 + wave2 + wave3;
 
                     gridPoints[r][c] = {{ x: px, y: py + yOffset }};
                 }}
             }}
 
-            // Draw Mesh Lateral Curves
+            // Draw Lateral Curves
             for (let r = 0; r <= rows; r++) {{
                 ctx.beginPath();
                 ctx.strokeStyle = (r % 2 === 0) ? meshPrimary : meshSecondary;
-                ctx.lineWidth = 1 + (r / rows) * 1.2;
+                ctx.lineWidth = 1.4 + (r / rows) * 1.6;
                 for (let c = 0; c <= cols; c++) {{
                     const pt = gridPoints[r][c];
                     if (c === 0) ctx.moveTo(pt.x, pt.y);
@@ -241,11 +260,11 @@ def render_landing_animated_background(theme: dict) -> None:
                 ctx.stroke();
             }}
 
-            // Draw Mesh Longitudinal Perspective Rays
+            // Draw Longitudinal Perspective Rays & Intersection Nodes
             for (let c = 0; c <= cols; c += 2) {{
                 ctx.beginPath();
                 ctx.strokeStyle = meshSecondary;
-                ctx.lineWidth = 1;
+                ctx.lineWidth = 1.3;
                 for (let r = 0; r <= rows; r++) {{
                     const pt = gridPoints[r][c];
                     if (r === 0) ctx.moveTo(pt.x, pt.y);
@@ -254,53 +273,70 @@ def render_landing_animated_background(theme: dict) -> None:
                 ctx.stroke();
             }}
 
+            // Draw Glowing Grid Intersection Nodes
+            for (let r = 2; r <= rows; r += 2) {{
+                for (let c = 1; c < cols; c += 3) {{
+                    const pt = gridPoints[r][c];
+                    ctx.beginPath();
+                    ctx.arc(pt.x, pt.y, 2.8, 0, Math.PI * 2);
+                    ctx.fillStyle = meshNodeColor;
+                    ctx.fill();
+                }}
+            }}
+
             // 2. Draw Floating Candlestick Vectors & Financial Trendline
             const candleAreaWidth = width * 0.88;
             const candleStartX = (width - candleAreaWidth) / 2;
             const candleSpacing = candleAreaWidth / numCandles;
-            const candleBaseY = height * 0.62;
+            const candleBaseY = height * 0.65;
+            const candleWidth = Math.max(candleSpacing * 0.52, 14);
             const trendPoints = [];
 
             for (let i = 0; i < numCandles; i++) {{
                 const cd = candles[i];
-                const osc = Math.sin(tick * 1.5 + cd.phase) * 3;
+                const osc = Math.sin(tick * 1.4 + cd.phase) * 4;
                 const cx = candleStartX + i * candleSpacing + candleSpacing * 0.5;
 
-                const openY = candleBaseY - (cd.open + osc) * 1.2;
-                const closeY = candleBaseY - (cd.close + osc) * 1.2;
-                const highY = candleBaseY - (cd.high + osc) * 1.2;
-                const lowY = candleBaseY - (cd.low + osc) * 1.2;
+                const openY = candleBaseY - (cd.open + osc) * 1.15;
+                const closeY = candleBaseY - (cd.close + osc) * 1.15;
+                const highY = candleBaseY - (cd.high + osc) * 1.15;
+                const lowY = candleBaseY - (cd.low + osc) * 1.15;
 
                 const isBull = cd.close >= cd.open;
                 const bodyTop = Math.min(openY, closeY);
-                const bodyHeight = Math.max(Math.abs(closeY - openY), 4);
-                const candleWidth = Math.max(candleSpacing * 0.42, 6);
+                const bodyHeight = Math.max(Math.abs(closeY - openY), 6);
 
-                // Draw Wick Line
+                // Draw Wick Line (bold, high-visibility 2.2px)
                 ctx.beginPath();
-                ctx.strokeStyle = isBull ? candleWick : (isDark ? "rgba(239, 68, 68, 0.65)" : "rgba(220, 38, 38, 0.45)");
-                ctx.lineWidth = 1.4;
+                ctx.strokeStyle = isBull ? candleWick : candleBearWick;
+                ctx.lineWidth = 2.2;
                 ctx.moveTo(cx, highY);
                 ctx.lineTo(cx, lowY);
                 ctx.stroke();
 
                 // Draw Candlestick Body
-                ctx.fillStyle = isBull ? candleBull : (isDark ? "rgba(239, 68, 68, 0.6)" : "rgba(220, 38, 38, 0.4)");
+                ctx.fillStyle = isBull ? candleBull : candleBear;
                 ctx.fillRect(cx - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
 
-                // Add slight border
-                ctx.strokeStyle = isBull ? candleWick : (isDark ? "rgba(248, 113, 113, 0.8)" : "rgba(185, 28, 28, 0.5)");
-                ctx.lineWidth = 1;
+                // Add crisp outline
+                ctx.strokeStyle = isBull ? candleWick : candleBearWick;
+                ctx.lineWidth = 1.6;
                 ctx.strokeRect(cx - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
+
+                // Draw Volume Bar at base
+                const volHeight = cd.volume * 0.8;
+                const volY = height * 0.94 - volHeight;
+                ctx.fillStyle = isBull ? (isDark ? "rgba(16, 185, 129, 0.45)" : "rgba(5, 150, 105, 0.35)") : (isDark ? "rgba(244, 63, 94, 0.40)" : "rgba(220, 38, 38, 0.30)");
+                ctx.fillRect(cx - candleWidth / 2, volY, candleWidth, volHeight);
 
                 trendPoints.push({{ x: cx, y: (openY + closeY) / 2 }});
             }}
 
-            // Draw Ascending Financial Trendline (Spline through candles)
+            // Draw Bold Financial Trendline (Spline through candles)
             if (trendPoints.length > 1) {{
                 ctx.beginPath();
                 ctx.strokeStyle = trendLineColor;
-                ctx.lineWidth = 2.2;
+                ctx.lineWidth = 3.2;
                 ctx.moveTo(trendPoints[0].x, trendPoints[0].y);
                 for (let i = 1; i < trendPoints.length; i++) {{
                     const prev = trendPoints[i - 1];
@@ -311,24 +347,57 @@ def render_landing_animated_background(theme: dict) -> None:
                 }}
                 ctx.stroke();
 
-                // Draw glowing pulse along trendline head
+                // Draw glowing pulse cursor & live ticker badge on trendline head
                 const last = trendPoints[trendPoints.length - 1];
                 ctx.beginPath();
-                ctx.arc(last.x, last.y, 4, 0, Math.PI * 2);
+                ctx.arc(last.x, last.y, 6, 0, Math.PI * 2);
                 ctx.fillStyle = trendLineColor;
                 ctx.fill();
+
+                // Pulsing outer halo
+                const pulseR = 8 + Math.sin(tick * 3) * 3;
+                ctx.beginPath();
+                ctx.arc(last.x, last.y, pulseR, 0, Math.PI * 2);
+                ctx.strokeStyle = trendLineColor;
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+
+                // Live price badge
+                ctx.font = '700 12px "Inter", sans-serif';
+                const tagText = '▲ $154.20 (+18.4%)';
+                const tagWidth = ctx.measureText(tagText).width + 16;
+                ctx.fillStyle = badgeBg;
+                ctx.fillRect(last.x - tagWidth - 10, last.y - 12, tagWidth, 24);
+                ctx.strokeStyle = badgeBorder;
+                ctx.lineWidth = 1.2;
+                ctx.strokeRect(last.x - tagWidth - 10, last.y - 12, tagWidth, 24);
+                ctx.fillStyle = isBullColor = isDark ? "#34D399" : "#059669";
+                ctx.fillText(tagText, last.x - tagWidth - 2, last.y + 4);
             }}
 
-            // 3. Draw Ambient Mathematical Coordinates & Floating Tokens
+            // 3. Draw Ambient Mathematical Badges
             ctx.font = '600 12px "Inter", monospace, sans-serif';
-            ctx.fillStyle = particleColor;
             for (let k = 0; k < mathTokens.length; k++) {{
                 const tk = mathTokens[k];
                 tk.x += tk.vx;
                 tk.y += tk.vy;
-                if (tk.x < 0.02 || tk.x > 0.95) tk.vx = -tk.vx;
-                if (tk.y < 0.08 || tk.y > 0.85) tk.vy = -tk.vy;
-                ctx.fillText(tk.text, tk.x * width, tk.y * height);
+                if (tk.x < 0.04 || tk.x > 0.94) tk.vx = -tk.vx;
+                if (tk.y < 0.08 || tk.y > 0.82) tk.vy = -tk.vy;
+
+                const textW = ctx.measureText(tk.text).width + 16;
+                const bx = tk.x * width;
+                const by = tk.y * height;
+
+                // Draw pill background
+                ctx.fillStyle = badgeBg;
+                ctx.fillRect(bx - 8, by - 14, textW, 22);
+                ctx.strokeStyle = badgeBorder;
+                ctx.lineWidth = 1;
+                ctx.strokeRect(bx - 8, by - 14, textW, 22);
+
+                // Draw text
+                ctx.fillStyle = badgeText;
+                ctx.fillText(tk.text, bx, by + 2);
             }}
 
             win._ecBgAnimId = win.requestAnimationFrame(draw);
