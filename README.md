@@ -219,55 +219,6 @@ E-Commerce-IQ/
 
 ---
 
-## <img src="docs/images/icons/getting_started.svg" width="22" height="22" valign="middle" /> Getting Started
-
-### <img src="docs/images/icons/prerequisites.svg" width="18" height="18" valign="middle" /> 1. Prerequisites
-- Python 3.10 or higher
-- Git
-
-### <img src="docs/images/icons/terminal_setup.svg" width="18" height="18" valign="middle" /> 2. Environment Setup
-```bash
-# Clone repository
-git clone https://github.com/AlankritaPaul/E-Commerce-IQ.git
-cd E-Commerce-IQ
-
-# Create a virtual environment
-python -m venv .venv
-
-# Activate virtual environment
-# On Windows:
-.venv\Scripts\activate
-# On Linux/macOS:
-source .venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-```
-
-### <img src="docs/images/icons/config_key.svg" width="18" height="18" valign="middle" /> 3. Environment Configuration
-Copy the sample environment file:
-```bash
-cp .env.example .env
-```
-Open `.env` and set your configuration variables (e.g., `GEMINI_API_KEY`).
-
-### <img src="docs/images/icons/play_run.svg" width="18" height="18" valign="middle" /> 4. Running the Project
-```bash
-# Initialize the database schema
-python scripts/init_db.py
-
-# Seed the 14-month realistic dataset
-python scripts/seed_mock_data.py
-
-# Run all 117 automated unit and integration tests
-python -m unittest discover -s tests
-
-# Launch the interactive BI Dashboard
-python -m streamlit run ui/app.py
-```
-
----
-
 ## <img src="docs/images/icons/license.svg" width="22" height="22" valign="middle" /> License
 
 This project is licensed under the [MIT License](LICENSE).
