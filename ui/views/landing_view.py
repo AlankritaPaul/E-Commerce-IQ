@@ -103,6 +103,9 @@ def render_landing_animated_background(theme: dict) -> None:
         </div>
         <style>
             /* Ensure Streamlit containers remain transparent on front page so background is vividly visible */
+            .stApp {{
+                background: transparent !important;
+            }}
             [data-testid="stAppViewContainer"] {{
                 background: transparent !important;
             }}
