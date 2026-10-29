@@ -1,0 +1,4 @@
+# GitHub Linguist Language Overrides
+# Include SQL in the repository Languages statistics bar
+*.sql linguist-detectable=true
+*.sql linguist-language=SQL
