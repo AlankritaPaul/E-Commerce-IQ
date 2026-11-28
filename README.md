@@ -68,12 +68,7 @@ Unlike conventional dashboards that only display static graphs, or generative AI
 - Variance analysis highlighting percentage changes and absolute delta values.
 
 ### <img src="docs/images/icons/ai_copilot.svg" width="18" height="18" valign="middle" /> 7. Natural Language Conversational Copilot
-- Business owners can ask questions in plain English, such as:
-  - *"What was my net revenue this month compared to last month?"*
-  - *"Which products have a return rate higher than 15%, and what are customers complaining about?"*
-  - *"Why did sales drop in the Electronics category last week?"*
-  - *"What is our current Average Order Value and repeat customer percentage?"*
-- Converts queries into safe, read-only SQL, executes them deterministically, and provides executive summaries.
+- Business owners can ask questions in plain English.
 
 ---
 
